@@ -1,0 +1,61 @@
+.studentprojects .dark_overla {
+    background: red !important;
+    // button,
+    // .btn_btn {
+    //     background-color: none;
+    //     border-radius: 10px;
+    //     border: none;
+    //     padding: 10px;
+    // }
+
+
+}
+
+.modal_box {
+    h4 {
+        font-size: small;
+        margin-top: 20px;
+    } 
+    span {
+        color: red !important;
+    }
+    .flex_2 {
+        display: flex;
+        width: 100%;
+        position: relative;
+        gap: 10px;
+
+        input,
+        .input {
+            position: relative;
+            width: 100%;
+        }
+    }
+    .mv_btn{
+        color: var(--light) !important;
+        background-color: var(--bold-ocean);
+        margin: 10px;
+        >*{
+            margin: 4px;
+        }
+    }
+    button{
+        background-color: none;
+        border-radius: 10px;
+        border: none;
+        padding: 10px;
+        padding-left: 20px;
+        text-align: center;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid var(--border) !important;
+        background: none;
+
+        // background-color: red;
+        
+    }
+}
