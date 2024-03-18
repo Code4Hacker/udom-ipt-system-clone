@@ -3,18 +3,42 @@ import { BarTop, Sidebar, Topbar } from '../../components'
 import { Button, Col, Container, Row } from 'react-bootstrap'
 import raws from "../../raws/user.json"
 import { JournalBookmarkFill } from 'react-bootstrap-icons'
+import axios from 'axios'
+import { baseURL } from '../../paths/base_url'
 
 const UserDashboard = () => {
 
-  const { user } = raws;
-  const { about, academic, selection } = user;
+  // const { user } = raws;
+  const [user, setUser] = useState();
+  // const { about, academic, selection } = user;
   const [next, setNext] = useState(false);
-  const { college, department, program } = academic;
+  const [about, setAbout] = useState();
+  const [college, setCollege] = useState();
+  const [program, setProgram] = useState();
+  const [academic, setAdemic] = useState();
+  const [department, setDepartment] = useState();
+  const [selection, setSelection] = useState();
 
-  // useEffect(() => {
-  //   setNext(false)
-  // }, [])
+  const [student, setStudent] = useState();
+  const storage = window.localStorage;
+  let forma = (new FormData());
+  forma.append("studentId", storage.getItem("std_usr"));
+  let bodydata = forma;
+  const getStudentDetails = async () => {
+    const requests = axios.request({
+      method:"POST",
+      url:`${baseURL}student.php`,
+      data: bodydata
+    });
+    setUser((await requests).data);
+    const { academic, about, selection } = (await requests).data[0];
+    const { college, department, program } = academic;
+    setAdemic(academic); setAbout(about); setSelection(selection);
+    setCollege(college); setDepartment(department); setProgram(program);
+    console.log((await requests).data[0]);
+  }
 
+  useEffect(() => { getStudentDetails();}, []);
 
 
   return (

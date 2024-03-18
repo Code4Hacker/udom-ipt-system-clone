@@ -1,23 +1,41 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { udom_logo } from '../assets'
 import { Row } from 'react-bootstrap'
 import { ArrowDown, Fullscreen, Toggle2On } from 'react-bootstrap-icons'
+import { useNavigate } from 'react-router-dom'
+import { useIdleTimer } from 'react-idle-timer'
 
-const BarTop = () => {
+const BarTop = ({ username, menu, extras }) => {
+    const tableRef = useRef(null);
+    const navigator = useNavigate();
+
+    const enterFullscreen = () => { };
+    const storage = window.localStorage;
+
+    if (!storage.getItem("std_usr")) navigator("/");
+
+    const logOut = () => navigator("/");
+
+    const { getRemainingTime } = useIdleTimer({
+        onIdle: logOut,
+        timeout: 10 * 60 * 1000
+    });
+
+
     return (
-        <div>
+        <div onClick={enterFullscreen}>
             <Row className='' style={{
                 background: 'var(--bold-ocean)'
             }}>
                 <div className="flex_box" style={{
-                    "--width": '240px', "--width-two": 'auto', '--height': 'auto', padding:"0px",margin:'0px'
+                    "--width": '240px', "--width-two": 'auto', '--height': 'auto', padding: "0px", margin: '0px'
                 }}>
-                    <div className="" style={{background:'var(--light)'}}></div>
+                    <div className="" style={{ background: 'var(--light)' }}></div>
                     <div className="flex_box top-bar snipped_top" style={{
-                    "--width": 'auto', "--width-two": 'auto', '--height': 'auto'
-                }}>
+                        "--width": 'auto', "--width-two": 'auto', '--height': 'auto'
+                    }}>
                         <div className="" style={{
-                            marginLeft:"240px"
+                            marginLeft: "240px"
                         }}>
                             <button className="primary text-larger">
                                 <i><Toggle2On /></i>

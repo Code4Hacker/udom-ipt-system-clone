@@ -1,16 +1,24 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import {  ArrowDown, Fullscreen, Toggle2On } from 'react-bootstrap-icons'
 import { udom_logo } from '../assets'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Topbar = ({ headline, subheadline, note}) => {
+  const tableRef = useRef(null);
+  const navigator = useNavigate();
+
+  const enterFullscreen = () => { };
+  const  storage = window.localStorage;
+
+  if(!storage.getItem("std_usr")) navigator("/");
+  
   return (
     <div className='' style={{
       position:'relative',
       overflow:'hidden',
       width:'100%'
-    }}>
+    }} onClick={enterFullscreen}>
         <Row className='' style={{
           background: 'var(--bold-ocean)'
         }}>
