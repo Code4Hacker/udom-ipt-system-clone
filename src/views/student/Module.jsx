@@ -11,6 +11,8 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import toast, { Toaster } from 'react-hot-toast';
 import jQuery from 'jquery';
+import axios from 'axios';
+import { baseURL } from '../../paths/base_url';
 
 
 const Module = () => {
@@ -19,22 +21,21 @@ const Module = () => {
     const [selected, setSelected] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [rowClick, setRowClick] = useState(true);
+
     // const toast = useRef(null);
 
     const onRowSelect = (event) => {
-        // toast.current.show({ severity: 'success', summary: 'Product Selected', detail: `Name: ${event.data.name}`, life: 3000 });
         toast.success(`You've Select -> ${event.data.name}`);
         jQuery("td").css({
             "background-color": 'var(--light)'
-        })
+        });
         jQuery(event.originalEvent.target).css({
             "background-color": 'var(--alice)'
-        })
+        });
 
     };
 
     const onRowUnselect = (event) => {
-        // toast.current.show({ severity: 'warn', summary: 'Product Unselected', detail: `Name: ${event.data.name}`, life: 3000 });
         toast.error(`You've Unselect -> ${event.data.name}`);
         jQuery("td").css({
             "background-color": 'var(--light)'
@@ -47,20 +48,31 @@ const Module = () => {
     const dt = useRef(null);
 
     const cols = [
-        { field: 'sn', header: '#' },
-        { field: 'name', header: 'Module Name' },
+        { field: 'seId', header: '#' },
+        { field: 'module_name', header: 'Module Name' },
         { field: 'category', header: 'Category' },
-        { field: 'session', header: 'Session' },
+        { field: 'session_time', header: 'Session' },
         { field: 'venue', header: 'Venue' },
         { field: 'lab', header: 'LAB' },
         { field: 'capacity', header: 'Capacity' },
-        { field: 'act1', header: '' },
+        { field: 'who_takes', header: 'Choosed' },
         { field: 'act2', header: '' },
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
-
+    const getModulesDetails = async () => {
+        try {
+            const requests = axios.request({
+                method: "POST",
+                url: `${baseURL}modules.php`
+            });
+            console.log((await requests).data);
+            setStudent((await requests).data)
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
+        }
+    }
     useEffect(() => {
-        ModuleModal.getModules().then((data) => setStudent(data));
+        getModulesDetails();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -181,7 +193,7 @@ const Module = () => {
                             <div className="data_table">
                                 <Tooltip target=".export-buttons>button" position="bottom" />
 
-                                <DataTable ref={dt} value={student} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'balance', 'session']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
+                                <DataTable ref={dt} value={student} paginator rows={5} filters={filters} globalFilterFields={['module_name', 'category', 'seId', 'session_time', 'venue', 'lab', 'who_takes']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
                                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} header={header} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
                                     onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>

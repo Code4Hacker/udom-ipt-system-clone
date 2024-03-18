@@ -4,7 +4,7 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'
 import React from 'react'
 import { useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { baseURL } from '../paths/base_url';
 import { useIdleTimer } from 'react-idle-timer';
@@ -73,7 +73,6 @@ const Registration = () => {
   };
   return (
     <>
-      <Toaster position='top-right' />
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
 

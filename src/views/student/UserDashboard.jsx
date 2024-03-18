@@ -5,6 +5,7 @@ import raws from "../../raws/user.json"
 import { JournalBookmarkFill } from 'react-bootstrap-icons'
 import axios from 'axios'
 import { baseURL } from '../../paths/base_url'
+import toast from 'react-hot-toast'
 
 const UserDashboard = () => {
 
@@ -25,20 +26,24 @@ const UserDashboard = () => {
   forma.append("studentId", storage.getItem("std_usr"));
   let bodydata = forma;
   const getStudentDetails = async () => {
-    const requests = axios.request({
-      method:"POST",
-      url:`${baseURL}student.php`,
-      data: bodydata
-    });
-    setUser((await requests).data);
-    const { academic, about, selection } = (await requests).data[0];
-    const { college, department, program } = academic;
-    setAdemic(academic); setAbout(about); setSelection(selection);
-    setCollege(college); setDepartment(department); setProgram(program);
-    console.log((await requests).data[0]);
+    try {
+      const requests = axios.request({
+        method: "POST",
+        url: `${baseURL}student.php`,
+        data: bodydata
+      });
+      setUser((await requests).data);
+      const { academic, about, selection } = (await requests).data[0];
+      const { college, department, program } = academic;
+      setAdemic(academic); setAbout(about); setSelection(selection);
+      setCollege(college); setDepartment(department); setProgram(program);
+      // console.log((await requests).data[0]);
+    } catch (error) {
+      toast.error(`Something went wrong\n${error}`);
+    }
   }
 
-  useEffect(() => { getStudentDetails();}, []);
+  useEffect(() => { getStudentDetails(); }, []);
 
 
   return (
@@ -112,20 +117,20 @@ const UserDashboard = () => {
               paddingTop: '40px'
             }}>
               <div className="button" style={{
-                maxWidth:'420px',
-                position:'relative',
-                display:"grid",
-                gridTemplateColumns:"auto auto"
+                maxWidth: '420px',
+                position: 'relative',
+                display: "grid",
+                gridTemplateColumns: "auto auto"
               }}>
                 <Button className={` ${next ? 'not-btn' : 'active-btn'}`} onClick={() => next ? setNext(false) : ""} style={{
-                  display:'flex'
+                  display: 'flex'
                 }}><i><JournalBookmarkFill /></i> <span className='ml-2 -mt-1' style={{
-                  marginTop:'-2px'
+                  marginTop: '-2px'
                 }}>Academic Information</span></Button>
                 <Button className={`${!next ? 'not-btn' : 'active-btn'}`} onClick={() => !next ? setNext(true) : ""} style={{
-                  display:'flex'
+                  display: 'flex'
                 }}><i><JournalBookmarkFill /></i> <span className='ml-2 -mt-1' style={{
-                  marginTop:'-2px', 
+                  marginTop: '-2px',
                 }}>My  Selection</span></Button>
               </div>
               {

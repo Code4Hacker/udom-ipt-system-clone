@@ -13,6 +13,8 @@ import jQuery from 'jquery';
 import studentRaws from "../../raws/studentprojects.json";
 import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
+import axios from 'axios';
+import { baseURL } from '../../paths/base_url';
 
 const StudentProjects = () => {
     const [project, setProject] = useState([]);
@@ -60,13 +62,18 @@ const StudentProjects = () => {
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
-    useEffect(() => {
-        let fulled = [];
-        let obj = new Object();
-        let arr = new Array();
-        const data = () => {
-            for (let index = 0; index < studentRaws.projects.length; index++) {
-                const element = studentRaws.projects[index];
+    const getModulesDetails = async () => {
+        try {
+            const requests = axios.request({
+                method: "POST",
+                url: `${baseURL}projects.php`
+            });
+
+            let fulled = [];
+            let obj = new Object();
+            let arr = new Array();
+            for (let index = 0; index < (await requests).data.length; index++) {
+                const element = (await requests).data[index];
                 // console.log(element.students)
 
                 for (let std = 0; std < element.students.length; std++) {
@@ -86,11 +93,14 @@ const StudentProjects = () => {
                 }
                 // fulled = fulled.concat(" \n\n\n\n\n")
                 arr.push(obj);
+                setProject(arr);
             }
-            console.log(arr);
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
         }
-        data();
-        setProject(arr);
+    }
+    useEffect(() => {
+        getModulesDetails();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -290,7 +300,7 @@ const StudentProjects = () => {
                             <div className="data_table">
                                 <Tooltip target=".export-buttons>button" position="bottom" />
 
-                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'balance', 'domain']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
+                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'description', 'domain', 'supervisor','remarks','students','year']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
                                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} header={header} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
                                     onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>
