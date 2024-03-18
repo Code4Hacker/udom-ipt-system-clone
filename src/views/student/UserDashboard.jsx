@@ -46,7 +46,7 @@ const UserDashboard = () => {
                       About Me :
                     </p>
                     <Container className='list_about'>
-                      <div className="flex_box ms-2" style={{
+                      <div className="flex_box ms-2 mt-3" style={{
                         '--width': '35%', '--width-two': 'auto', '--height': 'auto'
                       }}>
                         <div className=""><span className='text-bold'>Full Name :</span></div>
@@ -87,9 +87,22 @@ const UserDashboard = () => {
               padding: '10px',
               paddingTop: '40px'
             }}>
-              <div className="button">
-                <Button className={`${next ? 'not-btn' : 'active-btn'}`} onClick={() => next ? setNext(false) : ""}><i><JournalBookmarkFill /></i> Academic Information</Button>
-                <Button className={`${!next ? 'not-btn' : 'active-btn'}`} onClick={() => !next ? setNext(true) : ""}><i><JournalBookmarkFill /></i> My Selection</Button>
+              <div className="button" style={{
+                maxWidth:'420px',
+                position:'relative',
+                display:"grid",
+                gridTemplateColumns:"auto auto"
+              }}>
+                <Button className={` ${next ? 'not-btn' : 'active-btn'}`} onClick={() => next ? setNext(false) : ""} style={{
+                  display:'flex'
+                }}><i><JournalBookmarkFill /></i> <span className='ml-2 -mt-1' style={{
+                  marginTop:'-2px'
+                }}>Academic Information</span></Button>
+                <Button className={`${!next ? 'not-btn' : 'active-btn'}`} onClick={() => !next ? setNext(true) : ""} style={{
+                  display:'flex'
+                }}><i><JournalBookmarkFill /></i> <span className='ml-2 -mt-1' style={{
+                  marginTop:'-2px', 
+                }}>My  Selection</span></Button>
               </div>
               {
                 !next ?

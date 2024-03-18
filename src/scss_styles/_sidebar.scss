@@ -25,18 +25,19 @@
             text-decoration: none;
             color: var(--grey);
             padding: 10px;
+            display: flex;
             margin-bottom: 4px;
             gap: 10px;
             align-items: center;
             i{
                 padding-right: 10px;
-                margin-top: 35px;
+                margin-top: 5px;
                 // background-color: red;
                 position: relative;
             }
             span{
                 position: relative;
-                top: -2px;
+                top: -9px;
             }
 
         }
