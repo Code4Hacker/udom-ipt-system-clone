@@ -29,7 +29,7 @@ const UserDashboard = () => {
     try {
       const requests = axios.request({
         method: "POST",
-        url: `${baseURL}student.php`,
+        url: `${baseURL}con_std.php`,
         data: bodydata
       });
       setUser((await requests).data);
@@ -194,17 +194,17 @@ const UserDashboard = () => {
                     <div className="acm five-grid m-4 text-bold text-muted" style={{
                       "--w1": "30px",
                       "--w2": "auto",
-                      "--w3": "100px",
-                      "--w4": "100px",
+                      "--w3": "180px",
+                      "--w4": "150px",
                       "--w5": "150px",
                       width: "95%",
                       backgroundColor: 'var(--alice)'
                     }}>
                       <div className="">#</div>
-                      <div className="">Module Name</div>
-                      <div className="">Session</div>
-                      <div className="">Venue</div>
-                      <div className="">LAB</div>
+                      <div className="">Place Name</div>
+                      <div className="">Region</div>
+                      <div className="">District</div>
+                      <div className="">Supervisor</div>
 
                     </div>
                     {
@@ -212,13 +212,25 @@ const UserDashboard = () => {
                         <div className="acm five-grid m-4 text-muted" style={{
                           "--w1": "30px",
                           "--w2": "auto",
-                          "--w3": "100px",
-                          "--w4": "100px",
+                          "--w3": "180px",
+                          "--w4": "150px",
                           "--w5": "150px",
                           width: "95%"
                         }}>
                           <div className="">{key + 1}</div>
-                          <div className="">{selected.module}</div>
+                          <div className="">
+                            <span className="text-bold">Name: </span>
+                            <span className="">{selected.module}</span>
+                            <br />
+                            <span className="text-bold">Category: </span>
+                            <span className="">{selected.category}</span>
+                            <br />
+                            <span className="text-bold">Branch: </span>
+                            <span className="">{selected.branch}</span>
+                            <br />
+                            <span className="text-bold">Area: </span>
+                            <span className="">{selected.area}</span>
+                          </div>
                           <div className="">{selected.session}</div>
                           <div className="">{selected.venue}</div>
                           <div className="">{selected.lab}</div>

@@ -15,196 +15,13 @@ import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
-import { AutoComplete } from 'primereact/autocomplete';
-import { Chips } from "primereact/chips";
 
-const StudentProjects = () => {
+const PlaceOfSlection = () => {
     const [project, setProject] = useState([]);
     const [filters, setFilters] = useState(null);
     const [selected, setSelected] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
-    const [visible, setVisible] = useState(false);
-
-
-    const [Students, setStudents] = useState([]);
-    const [selectedStudent, setSelectedStudent] = useState([]);
-    const [filteredStudents, setFilteredStudents] = useState(null);
-
-    const [Supervisors, setSupervisors] = useState([]);
-    const [selectedSupervisor, setSelectedSupervisor] = useState(null);
-    const [filteredSupervisors, setFilteredSupervisors] = useState(null);
-
-
-    const [Domains, setDomains] = useState([]);
-    const [selectedDomain, setselectedDomain] = useState(null);
-    const [filteredDomains, setFilteredDomains] = useState(null);
-    const [value, setValue] = useState([]);
-    const p_categ = ["", "Industrial Practical Training(IPT)", "Final Year Project(FYP)"];
-
-
-
-    const [title, setTitle] = useState();
-    const [category, setCategory] = useState();
-    const [domain, setDomain] = useState();
-    const [supe, setSupe] = useState();
-    const [descr, setDescr] = useState();
-    const [year, setYear] = useState();
-    const [remarks, setRemarks] = useState();
-    const handleSubmit = async () => {
-        let formdata = new FormData();
-        let connects = "";
-        for (let index = 0; index < selectedStudent.length; index++) {
-            const element = selectedStudent[index].name;
-            if (index >= selectedStudent.length -1) {
-
-                connects = connects.concat(element);
-            } else {
-
-                connects = connects.concat(element + ", ");
-            }
-        }
-        console.log(connects);
-        formdata.append("title", title);
-        formdata.append("category", category);
-        formdata.append("domain", selectedDomain.name);
-        formdata.append("descr", descr);
-        formdata.append("supervisor", selectedSupervisor.name);
-        formdata.append("remarks", remarks);
-        formdata.append("students", connects);
-        formdata.append("years", year);
-
-        let bodyContent = formdata;
-
-        let script = {
-            method: "POST",
-            url: `${baseURL}add_projects.php`,
-            data: bodyContent
-
-        }
-        console.log("remarks"+remarks+", domain"+selectedDomain.name)
-
-        try {
-            const request = axios.request(
-                script
-            );
-            console.log((await request).data);
-            if((await request).data.status === 200){
-                toast.success("project added Successiful");
-                getModulesDetails();
-                setVisible(false);
-            }else{
-
-                toast.error("Error\n"+(await request).data.message);
-            }
-        } catch (error) {
-            toast.error("something went Wrong\n"+ error);
-        }
-
-    }
-    const search2 = (event) => {
-
-        setTimeout(() => {
-            let _filteredDomains;
-
-            if (!event.query.trim().length) {
-                _filteredDomains = [...Domains];
-            }
-            else {
-                _filteredDomains = Domains.filter((Supervisor) => {
-                    // console.log("filtered", _filteredDomains)
-                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
-                });
-            }
-
-            setFilteredDomains(_filteredDomains);
-        }, 250);
-    }
-
-    const search3 = (event) => {
-
-        setTimeout(() => {
-            let _filteredSupervisors;
-
-            if (!event.query.trim().length) {
-                _filteredSupervisors = [...Supervisors];
-            }
-            else {
-                _filteredSupervisors = Supervisors.filter((Supervisor) => {
-                    console.log("filtered", _filteredSupervisors)
-                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
-                });
-            }
-
-            setFilteredSupervisors(_filteredSupervisors);
-        }, 250);
-    }
-    const search = (event) => {
-
-        setTimeout(() => {
-            let _filteredStudents;
-
-            if (!event.query.trim().length) {
-                _filteredStudents = [...Students];
-            }
-            else {
-                _filteredStudents = Students.filter((Supervisor) => {
-                    console.log("filtered", _filteredStudents)
-                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
-                });
-            }
-
-            setFilteredStudents(_filteredStudents);
-        }, 250);
-    }
-    document.querySelector(".p-autocomplete-token-label") ? document.querySelector(".p-autocomplete-token-label").innerHTML = document.querySelector(".p-autocomplete-token-label").innerHTML.substring(0, 2) + "..." : "";
-    // for supervisor
-    const getModulesSuper = async () => {
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}supervisor.php`
-            });
-            setSupervisors((await requests).data);
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
-    }
-    const superchange = (e) => {
-        setSelectedSupervisor(e.value);
-    }
-    // for domain
-    const getModulesDomain = async () => {
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}domains.php`
-            });
-            setDomains((await requests).data);
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
-    }
-    // for students
-    const getModulesStd = async () => {
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}student_names.php`
-            });
-            setStudents((await requests).data);
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
-    }
-    useEffect(() => {
-        getModulesStd();
-        getModulesSuper();
-        getModulesDomain();
-    }, []);
-
-
-
-    // const toast = useRef(null);
+    const [visible, setVisible] = useState(!false);
 
     const onRowSelect = (event) => {
         toast.success(`You've Select -> ${event.data.name}`);
@@ -231,14 +48,13 @@ const StudentProjects = () => {
 
     const cols = [
         { field: 'sn', header: '#' },
-        { field: 'name', header: 'Project Title' },
-        { field: 'category', header: 'Project Category' },
-        { field: 'domain', header: 'Project Domain' },
-        { field: 'description', header: 'Project Description' },
-        { field: 'supervisor', header: 'Project Supervisor' },
-        { field: 'remarks', header: 'Project Remarks' },
-        { field: 'students', header: 'Participating Students' },
-        { field: 'year', header: 'Year' },
+        { field: 'name', header: 'Place Name' },
+        { field: 'category', header: 'Category' },
+        { field: 'domain', header: 'Capacity' },
+        { field: 'description', header: 'Branch' },
+        { field: 'supervisor', header: 'Area' },
+        { field: 'remarks', header: 'Region' },
+        { field: 'students', header: 'District' }
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
@@ -246,36 +62,8 @@ const StudentProjects = () => {
         try {
             const requests = axios.request({
                 method: "POST",
-                url: `${baseURL}projects.php`
-            });
-
-            let fulled = [];
-            let obj = new Object();
-            let arr = new Array();
-            for (let index = 0; index < (await requests).data.length; index++) {
-                const element = (await requests).data[index];
-                // console.log(element.students)
-                fulled = [];
-                for (let std = 0; std < element.students.length; std++) {
-                    const el = element.students[std].student;
-                    fulled.push(el.replace("___", "(").replace("__","(").replace("_","(").replace("____","("));
-
-                }
-                obj = {
-                    sn: element.sn,
-                    name: element.name,
-                    category: element.category,
-                    domain: element.domain,
-                    description: element.description,
-                    supervisor: element.supervisor,
-                    remarks: element.remarks,
-                    students: fulled.join(", \n").replace("___", "(").replace("__","(").replace("_","(").replace("____","("),
-                    year: element.year
-                }
-                // fulled = fulled.concat(" \n\n\n\n\n")
-                arr.push(obj);
-                setProject(arr);
-            }
+                url: `${baseURL}place_selection.php`
+            });setProject((await requests).data);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -368,9 +156,9 @@ const StudentProjects = () => {
             <div className="flex justify-content-between">
 
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
-                <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
+                {/* <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
                     backgroundColor: 'var(--ocean)', height: '45px'
-                }}><Plus /> Add Student Project</Button>
+                }}><Plus /> Add Student Project</Button> */}
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -402,7 +190,7 @@ const StudentProjects = () => {
                         <div className="span">
                             <h4 className="text-muted page-title">Project Title <span>*</span></h4>
                         </div>
-                        <input type="text" className='primary' value={title} onChange={(e) => setTitle(e.target.value)}/>
+                        <input type="text" className='primary' />
                     </div>
                     <div className="flex_2">
 
@@ -410,21 +198,14 @@ const StudentProjects = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">Project Domain <span>*</span></h4>
                             </div>
-                            <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
-                                border: "none !important"
-
-                            }} dropdown />
-
+                            <input type="text" className='primary' />
                         </div>
 
                         <div className="input m-1">
                             <div className="span">
                                 <h4 className="text-muted page-title">Supervisor <span>*</span></h4>
                             </div>
-                            <AutoComplete className='auto_cp' field="name" value={selectedSupervisor} suggestions={filteredSupervisors} completeMethod={search3} onChange={superchange} style={{
-                                border: "none !important"
-
-                            }} dropdown />
+                            <input type="text" className='primary' />
                         </div>
                     </div>
 
@@ -434,43 +215,30 @@ const StudentProjects = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">Project Category <span>*</span></h4>
                             </div>
-                            <select style={{
-                                marginTop: "10px",
-                                padding: "11px",
-                                fontSize: "small"
-                            }} name="" id=""  value={category} onChange={(e) => setCategory(e.target.value)}>
-                                {
-                                    p_categ.map((dt, key) => <option value={dt} key={key}>{dt}</option>)
-                                }
-                            </select>
+                            <input type="text" className='primary' />
                         </div>
 
                         <div className="input m-1">
                             <div className="span">
                                 <h4 className="text-muted page-title">Project Remarks <span>*</span></h4>
                             </div>
-                            <input type="text" className='primary'  value={remarks} onChange={(e) => setRemarks(e.target.value)} />
+                            <input type="text" className='primary' />
                         </div>
                     </div>
                     <div className="input m-1">
                         <div className="span">
                             <h4 className="text-muted page-title">Select Student(s) <span>*</span></h4>
                         </div>
-                        <Tooltip target={".p-fluid"} position='bottom'>
-                        </Tooltip>
-                        <AutoComplete className='auto_cp' field="name" value={selectedStudent} multiple suggestions={filteredStudents} completeMethod={search} onChange={(e) => setSelectedStudent(e.value)} style={{
-                            border: "none !important"
-
-                        }} />
+                        <input type="text" className='primary' />
                     </div>
                     <div className="input m-1">
                         <div className="span">
                             <h4 className="text-muted page-title">Project Description/Functionality <span>*</span></h4>
                         </div>
-                        <textarea name="" id="" rows="5" className='primary' value={descr} onChange={(e) => setDescr(e.target.value)}></textarea>
+                        <textarea name="" id="" cols="30" rows="10" className='primary'></textarea>
                     </div>
                     <div className="button text-center">
-                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined onClick={handleSubmit} style={{
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined onClick={() => setVisible(false)} style={{
                             backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '100px', textAlign: 'center'
                         }}> <PlusCircle />Save</Button>
                     </div>
@@ -501,7 +269,7 @@ const StudentProjects = () => {
                             <div className="data_table">
                                 <Tooltip target=".export-buttons>button" position="bottom" />
 
-                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'description', 'domain', 'supervisor', 'remarks', 'students', 'year']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
+                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'description', 'domain', 'supervisor','remarks','students','year']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
                                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} header={header} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
                                     onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>
@@ -518,5 +286,4 @@ const StudentProjects = () => {
     )
 }
 
-
-export default StudentProjects
+export default PlaceOfSlection

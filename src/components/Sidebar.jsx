@@ -1,7 +1,7 @@
 import React from 'react'
 import { udom_logo } from '../assets'
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { FileEarmarkPdf, GridFill, JournalBookmarkFill, Speedometer, Tv } from 'react-bootstrap-icons'
+import { FileEarmarkPdf, GridFill, JournalBookmarkFill, ListTask, Speedometer, Tv, TvFill } from 'react-bootstrap-icons'
 const Sidebar = () => {
     const links = [
         {
@@ -9,14 +9,19 @@ const Sidebar = () => {
             "icon":<Speedometer/>,
             "title":"Dashboard"
         },
+        // {
+        //     "url":"/module",
+        //     "icon":<GridFill/>,
+        //     "title":"Module Selection"
+        // },
         {
-            "url":"/module",
-            "icon":<GridFill/>,
-            "title":"Module Selection"
+            "url":"/place_selection",
+            "icon":<ListTask/>,
+            "title":"Place Selection"
         },
         {
             "url":"/student_projects",
-            "icon":<Tv/>,
+            "icon":<TvFill/>,
             "title":"Student Projects"
         },
         {

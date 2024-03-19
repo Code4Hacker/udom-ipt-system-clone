@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { baseURL } from '../paths/base_url';
 import { useIdleTimer } from 'react-idle-timer';
+import { useEffect } from 'react';
 
 const Registration = () => {
   const [checked1, setChecked1] = useState(false);
@@ -20,7 +21,7 @@ const Registration = () => {
   }
   const { getRemainingTime } = useIdleTimer({
     onIdle,
-    timeout: .11 * 60 *  1000
+    timeout: .11 * 60 * 1000
   });
   const handleSubmit = async () => {
     // console.log(baseURL);
@@ -54,10 +55,10 @@ const Registration = () => {
               navigate("/user_board");
             }, 1500);
           }, 2000);
-        } else{
+        } else {
           toast.error("Fail to Sign In.\ncredential are Incorrect!");
         }
-        
+
       } catch (error) {
         toast.error(`Something went wrong! \n ${error}`)
       }
@@ -71,6 +72,10 @@ const Registration = () => {
       setLoading(false);
     }, 2000);
   };
+  window.localStorage.clear();
+  useEffect(() => {
+    window.localStorage.clear();
+  })
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
