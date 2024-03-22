@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Module, PlaceOfSlection, Registration, StudentProjects, UserDashboard } from './views'
 import { PrimeReactProvider } from 'primereact/api'
 import { Toaster } from 'react-hot-toast'
+import { LogBook } from './views'
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path='/module' element={<Module/>} />
         <Route path='/student_projects' element={<StudentProjects/>} />
         <Route path='/place_selection' element={<PlaceOfSlection/>} />
+        <Route path='/logbook' element={<LogBook/>} />
       </Routes>
     </BrowserRouter>
     </PrimeReactProvider>

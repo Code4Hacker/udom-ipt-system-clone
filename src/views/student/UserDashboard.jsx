@@ -6,6 +6,7 @@ import { JournalBookmarkFill } from 'react-bootstrap-icons'
 import axios from 'axios'
 import { baseURL } from '../../paths/base_url'
 import toast from 'react-hot-toast'
+import Loading from '../../components/Loading'
 
 const UserDashboard = () => {
 
@@ -34,6 +35,7 @@ const UserDashboard = () => {
       });
       setUser((await requests).data);
       const { academic, about, selection } = (await requests).data[0];
+      window.localStorage.setItem("u_name", about.fullname);
       const { college, department, program } = academic;
       setAdemic(academic); setAbout(about); setSelection(selection);
       setCollege(college); setDepartment(department); setProgram(program);
@@ -184,7 +186,7 @@ const UserDashboard = () => {
                               <span className='capitalize'>{program.description}</span>
                             </div>
 
-                          </div> : "Loading ..."
+                          </div> : <Loading />
                       }
                     </Container>
                   </div>
@@ -236,7 +238,7 @@ const UserDashboard = () => {
                           <div className="">{selected.lab}</div>
 
                         </div>
-                      ) : "Loading ..."
+                      ) : <Loading message={"No Selection"} />
                     }
                   </div>
               }

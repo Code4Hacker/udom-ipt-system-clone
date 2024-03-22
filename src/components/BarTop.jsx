@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { udom_logo } from '../assets'
 import { Button, Row } from 'react-bootstrap'
 import { ArrowDown, BagCheckFill, BoxArrowRight, Fullscreen, Toggle2On } from 'react-bootstrap-icons'
@@ -14,7 +14,6 @@ const BarTop = ({ username, menu, extras }) => {
     const enterFullscreen = () => { };
     const storage = window.localStorage;
 
-    if (!storage.getItem("std_usr")) navigator("/");
 
     const logOut = () => navigator("/");
 
@@ -22,7 +21,10 @@ const BarTop = ({ username, menu, extras }) => {
         onIdle: logOut,
         timeout: 10 * 60 * 1000
     });
-
+    useEffect(() => {
+        console.log(storage.getItem("std_usr"))
+        if(!storage.getItem("std_usr")) navigator("/");
+      },[])
 
     return (
         <div onClick={enterFullscreen}>
@@ -85,7 +87,7 @@ const BarTop = ({ username, menu, extras }) => {
                                     <img src={udom_logo} alt="" />
                                 </div>
                                 <div onClick={(e) => op.current.toggle(e)}>
-                                    <span>Paulo(Student)</span>
+                                    <span>{storage.getItem("u_name")? storage.getItem("u_name").split(" ")[0]:"Paulo"}(Student)</span>
                                 </div>
                                 <span className='icon-bg'><ArrowDown /></span>
                             </button>

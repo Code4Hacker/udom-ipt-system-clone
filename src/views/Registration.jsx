@@ -9,12 +9,14 @@ import { useNavigate } from 'react-router-dom';
 import { baseURL } from '../paths/base_url';
 import { useIdleTimer } from 'react-idle-timer';
 import { useEffect } from 'react';
+import Loading from '../components/Loading';
 
 const Registration = () => {
   const [checked1, setChecked1] = useState(false);
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const onIdle = () => {
     toast.loading("Please, don't take much time...");
@@ -24,17 +26,12 @@ const Registration = () => {
     timeout: .11 * 60 * 1000
   });
   const handleSubmit = async () => {
-    // console.log(baseURL);
     toast.dismiss();
     if (username.length < 2) toast.error("username not meet requirements");
     if (password.length < 2) toast.error("password not meet requirements");
 
     if (!(username.length < 2) && !(password.length < 2)) {
 
-      // toast.success("perfect");
-      // setTimeout(() => {
-      //   navigate("/user_board");
-      // }, 1000);
       let the_body = JSON.stringify({
         "t_number": username,
         "password": password
@@ -49,6 +46,8 @@ const Registration = () => {
           toast.success("Credential are Valid!\nlogin Successiful...");
           setTimeout(() => {
             toast.loading("Redirecting...");
+            show?setShow(false):setShow(true);
+            setShow(true);
             window.localStorage.setItem("std_usr", username);
             setTimeout(() => {
               toast.dismiss();
@@ -72,12 +71,13 @@ const Registration = () => {
       setLoading(false);
     }, 2000);
   };
-  window.localStorage.clear();
-  useEffect(() => {
-    window.localStorage.clear();
-  })
   return (
     <>
+      <div className="load">
+       {
+        show? <Loading message={"Something Wrong"}/>:""
+       }
+      </div>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
 

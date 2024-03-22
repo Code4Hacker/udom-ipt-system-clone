@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import {  ArrowDown, Fullscreen, Toggle2On } from 'react-bootstrap-icons'
 import { udom_logo } from '../assets'
@@ -11,7 +11,9 @@ const Topbar = ({ headline, subheadline, note}) => {
   const enterFullscreen = () => { };
   const  storage = window.localStorage;
 
-  if(!storage.getItem("std_usr")) navigator("/");
+  useEffect(() => {
+    if(!storage.getItem("std_usr")) navigator("/");
+  },[])
   
   return (
     <div className='' style={{

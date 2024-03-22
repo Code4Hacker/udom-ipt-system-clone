@@ -30,7 +30,7 @@ const Sidebar = () => {
             "title":"Arrival Notes"
         },
         {
-            "url":"/",
+            "url":"/logbook",
             "icon":<JournalBookmarkFill/>,
             "title":"Log  Book"
         },
