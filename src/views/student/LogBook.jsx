@@ -53,11 +53,13 @@ export default function BasicTabs() {
         setValue(newValue);
     };
 
-    const storage = window.localStorage;
-    let forma = (new FormData());
-    forma.append("studentId", storage.getItem("std_usr"));
-    let bodydata = forma;
-    const getStudentDetails = async () => {
+    const getStudentDetails = async (data) => {
+
+        const storage = window.localStorage;
+        let forma = (new FormData());
+        forma.append("studentId", storage.getItem("std_usr"));
+        forma.append("week", data? data:"week 1");
+        let bodydata = forma;
         try {
             const requests = axios.request({
                 method: "POST",
@@ -65,7 +67,7 @@ export default function BasicTabs() {
                 data: bodydata
             });
             setLogbooks((await requests).data);
-            console.log((await requests).data)
+            // console.log((await requests).data)
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -75,7 +77,7 @@ export default function BasicTabs() {
 
     const changeTime = (data) => {
         const changes = (new Date(data)).toDateString().split(" ")[0].toLocaleUpperCase();
-        console.log(changes)
+        // console.log(changes)
         let returning = "";
         switch (changes) {
             case "MON":
@@ -126,7 +128,7 @@ export default function BasicTabs() {
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                                         {
-                                            weeks.weeks.map((data, key) => <Tab label={data} {...a11yProps(0)} key={key} className='text-capitalize' />)
+                                            weeks.weeks.map((data, key) => <Tab label={data} {...a11yProps(0)} key={key} className='text-capitalize' onClick={() => getStudentDetails(data)} />)
                                         }
                                     </Tabs>
                                 </Box>
@@ -136,7 +138,7 @@ export default function BasicTabs() {
                                             logbooks.logbook !== undefined && logbooks.logbook?.length > 0 ? logbooks.logbook.map((data, key) =>
                                                 <div className="jornal_list">
                                                     <div className="jt-title">
-                                                        <span>{(data.date_created).replace("-","/").replace("-","/")}</span>
+                                                        <span>{(data.date_created).replace("-", "/").replace("-", "/")}</span>
                                                     </div>
                                                     <div className="jt-line">
                                                         <div className="ball"></div>
@@ -146,7 +148,7 @@ export default function BasicTabs() {
                                                         <h4 className="page-title capitalize  mt-2">Work Hours: {data.work_hours}</h4>
                                                         <br />
                                                         <span className='capitalize mt-2' style={{
-                                                            color:"var(--muted)"
+                                                            color: "var(--muted)"
                                                         }}>{data.task_description}</span>
                                                     </div>
 
