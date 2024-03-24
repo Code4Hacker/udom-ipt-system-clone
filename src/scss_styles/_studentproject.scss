@@ -10,7 +10,11 @@
 
 
 }
-
+.input.m-1{
+    span {
+        color: red;
+    }
+}
 .modal_box {
     h4 {
         font-size: small;
@@ -18,9 +22,7 @@
         margin-bottom: 10px;
     }
 
-    span {
-        color: red !important;
-    }
+   
 
     .flex_2 {
         display: flex;

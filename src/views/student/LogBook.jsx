@@ -10,6 +10,10 @@ import { baseURL } from '../../paths/base_url';
 import toast from 'react-hot-toast';
 import Loading from '../../components/Loading';
 import axios from 'axios';
+import { CloudDownloadFill, Download, PatchPlusFill, PlusCircle } from 'react-bootstrap-icons'
+import { Button } from 'react-bootstrap';
+import { Dialog } from 'primereact/dialog';
+import week from "../../raws/weeks.json";
 
 function ULogBook(props) {
     const { children, value, index, ...other } = props;
@@ -58,7 +62,7 @@ export default function BasicTabs() {
         const storage = window.localStorage;
         let forma = (new FormData());
         forma.append("studentId", storage.getItem("std_usr"));
-        forma.append("week", data? data:"week 1");
+        forma.append("week", data ? data : "week 1");
         let bodydata = forma;
         try {
             const requests = axios.request({
@@ -75,6 +79,47 @@ export default function BasicTabs() {
 
     React.useEffect(() => { getStudentDetails(); }, []);
 
+    const [visible, setVisible] = React.useState(false);
+    const the_weeks = week.weeks;
+    // inputs
+    const [weeks_no, setWeeks_no] = React.useState();
+    const [week_hours, setWeek_hours] = React.useState();
+    const [descr, setDescr] = React.useState();
+
+    const handleSubmit = async () => {
+        let formdata = new FormData();
+        formdata.append("work_hours", week_hours);
+        formdata.append("week_no", weeks_no);
+        formdata.append("descr", descr);
+        formdata.append("task_for", window.localStorage.getItem("std_usr") ? window.localStorage.getItem("std_usr"):"");
+
+        let bodyContent = formdata;
+
+        let script = {
+            method: "POST",
+            url: `${baseURL}post_logbook.php`,
+            data: bodyContent
+
+        }
+
+        try {
+            const request = axios.request(
+                script
+            );
+            console.log((await request).data);
+            if((await request).data.status === 200){
+                toast.success("project added Successiful");
+                getStudentDetails();
+                setVisible(false);
+            }else{
+
+                toast.error("Error\n"+(await request).data.message);
+            }
+        } catch (error) {
+            toast.error("something went Wrong\n"+ error);
+        }
+
+    }
     const changeTime = (data) => {
         const changes = (new Date(data)).toDateString().split(" ")[0].toLocaleUpperCase();
         // console.log(changes)
@@ -107,11 +152,68 @@ export default function BasicTabs() {
         }
         return returning.toLowerCase();
     }
+    const currentDate = () => {
+        return (new Date()).toDateString();
+    }
     return (
         <div className='view user_board'>
             <div className="flex_box" style={{
                 '--width': '240px', '--width-two': 'auto', '--height': '100vh'
             }}>
+                <div className="dark_overlay" style={{
+                    display: `${!visible ? 'none' : 'block'}`
+                }}>
+                    <Dialog header="" className='white_box modal_box' visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
+                        <div className="page-title text-bold" style={{
+                            borderBottom: '1.5px solid var(--shadow_color)',
+                            paddingBottom: '10px'
+                        }}>
+                            Fill Log Book For <span className="" style={{
+                                color: "green"
+                            }}>( {currentDate()} )</span>
+                        </div>
+
+
+                        <div className="input m-1">
+
+                            <div className="flex_2">
+                                <div className="input m-1">
+                                    <div className="span">
+                                        <h4 className="text-muted page-title text-bold">Work Hours <span>*</span></h4>
+                                    </div>
+                                    <input type="number" className='primary' value={week_hours} onChange={(e) => setWeek_hours(e.target.value)} />
+                                </div>
+                                <div className="input m-1">
+                                    <div className="span">
+                                        <h4 className="text-muted page-title text-bold">Week No <span>*</span></h4>
+                                    </div>
+                                    <select style={{
+                                        marginTop: "10px",
+                                        padding: "11px",
+                                        fontSize: "small"
+                                    }} name="" id=""  value={weeks_no} onChange={(e) => setWeeks_no(e.target.value)} >
+                                        {
+                                            the_weeks.map((data, key) => <option key={key} value={data}>{data}</option>)
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="input m-1">
+                                    <div className="span">
+                                        <h4 className="text-muted page-title text-bold">Activity Performed / Task <span>*</span></h4>
+                                    </div>
+                                    <textarea name="" id=""rows="5" value={descr} onChange={(e) => setDescr(e.target.value)} ></textarea>
+                                </div>
+                        </div>
+
+                        <div className="button text-center justify-center m-2">
+                            <button type="butto" className="flex text-sharp text-center text-white" outlined style={{
+                                backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '120px',
+                                 textAlign: 'center', position:'relative', left:'50%',transform:"translateX(-50%)"
+                            }}  onClick={handleSubmit}> <PlusCircle className='ms-2 mt-1 me-1'/> Save</button>
+                        </div>
+                    </Dialog>
+                </div>
                 <div className="left-screen-view">
                     <Sidebar />
                 </div>
@@ -124,6 +226,23 @@ export default function BasicTabs() {
                     />
                     <div className="border_box">
                         <div className="">
+                            <div className="button ps-4 pt-4" style={{
+                                maxWidth: '420px',
+                                position: 'relative',
+                                display: "grid",
+                                gridTemplateColumns: "auto auto"
+                            }}>
+                                <Button className={'active-btn'} style={{
+                                    display: 'flex'
+                                }} onClick={() => setVisible(!false)}><i><PatchPlusFill /></i> <span className='ml-2 -mt-1' style={{
+                                    marginTop: '-2px'
+                                }}>Fill LogBook</span></Button>
+                                <Button className={'active-btn'} style={{
+                                    display: 'flex'
+                                }}><i><CloudDownloadFill /></i> <span className='ml-2 -mt-1' style={{
+                                    marginTop: '-2px'
+                                }}>Download LogBook</span></Button>
+                            </div>
                             <Box sx={{ width: '100%' }}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -154,8 +273,6 @@ export default function BasicTabs() {
 
                                                 </div>
                                             ) : <Loading />
-                                            // console.log()
-                                            // logbooks.logbook !== undefined && logbooks.logbook?.length > 0 ? console.log(logbooks.logbook):<Loading/>
 
                                         }
                                     </ULogBook>)
