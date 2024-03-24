@@ -89,7 +89,7 @@ export default function BasicTabs() {
     const handleSubmit = async () => {
         let formdata = new FormData();
         formdata.append("work_hours", week_hours);
-        formdata.append("week_no", weeks_no);
+        formdata.append("week_no", weeks_no !== undefined ? weeks_no: "week 1");
         formdata.append("descr", descr);
         formdata.append("task_for", window.localStorage.getItem("std_usr") ? window.localStorage.getItem("std_usr"):"");
 

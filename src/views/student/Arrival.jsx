@@ -240,15 +240,32 @@ const ArrivalNote = () => {
         });
         setGlobalFilterValue('');
     };
-    const [datatook, setDatatook] =  useState();
+    const [datatook, setDatatook] = useState();
     const handleClickOpen = () => {
         let filedata = document.querySelector("input[type='file']");
         filedata.click();
     }
-    const getClickedData = () => {
-        if(datatook !== undefined){
-            
-        }else{
+    const getClickedData = async () => {
+        if (datatook !== undefined) {
+            try {
+                const storage = window.localStorage.getItem("std_usr");
+                let fields = new FormData();
+                fields.append("studentId", storage ? storage :"");
+                fields.append("uploads", datatook);
+
+                const bodydata = fields;
+
+                const requests = axios.request({
+                    method:"POST",
+                    url:`${baseURL}arrival_note.php`,
+                    data: bodydata
+                });
+                let status = (await requests).data.status;
+                status === 200  ? toast.success("Your Upload Success!") : status === 303 ? toast.error("You  have already Submitted. You're not allowed to do twice!"): toast.error("Something went Wrong, Make sure your  file is a pdf");
+            } catch (error) {
+                toast.error(error);
+            }
+        } else {
             toast.error("you didn't Upload anything, Please Insert file first");
         }
     }
@@ -259,7 +276,7 @@ const ArrivalNote = () => {
                 display: `${!visible ? 'none' : 'block'}`
             }}>
                 <Dialog header="" className='white_box modal_box' visible={visible} style={{ width: '30vw' }} onHide={() => setVisible(false)}>
-                    <input type="file" name="" id="" onChange={(e) => console.log(e.target.files[0])} hidden/>
+                    <input type="file" name="" id="" onChange={(e) => setDatatook(e.target.files[0])} hidden />
                     <h2 className="page-title text-bold pb-2 divider">
                         Upload Arrival Note
                     </h2>
