@@ -5,7 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
-import { FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg } from 'react-bootstrap-icons';
+import { CloudArrowDownFill, CloudArrowUpFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg } from 'react-bootstrap-icons';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import toast, { Toaster } from 'react-hot-toast';
@@ -17,7 +17,7 @@ import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
 import { udom_logo } from '../../assets';
 
-const PlaceOfSlection = () => {
+const ArrivalNote = () => {
     const [project, setProject] = useState([]);
     const [filters, setFilters] = useState(null);
     const [selected, setSelected] = useState(null);
@@ -43,7 +43,7 @@ const PlaceOfSlection = () => {
                 let newData = (new FormData());
                 newData.append("student", storage.getItem("std_usr"));
                 newData.append("selection", event.data.sn);
-                
+
 
                 let bodydata = newData;
                 try {
@@ -53,13 +53,13 @@ const PlaceOfSlection = () => {
                         data: bodydata
                     });
                     console.log((await requests).data);
-                    if((await requests).data.status === 200) {
-                      toast.dismiss(id.id);
-                      toast.success("Selection Success");
-                      setTimeout(() => {
-                        toast.dismiss();
-                      }, 3000);
-                    }else{toast.error("Something went wrong, try again!");}
+                    if ((await requests).data.status === 200) {
+                        toast.dismiss(id.id);
+                        toast.success("Selection Success");
+                        setTimeout(() => {
+                            toast.dismiss();
+                        }, 3000);
+                    } else { toast.error("Something went wrong, try again!"); }
                 } catch (error) {
                     toast.error(`Something went wrong\n${error}`);
                 }
@@ -132,22 +132,28 @@ const PlaceOfSlection = () => {
 
     const cols = [
         { field: 'sn', header: '#' },
-        { field: 'name', header: 'Place Name' },
-        { field: 'category', header: 'Category' },
-        { field: 'domain', header: 'Capacity' },
-        { field: 'description', header: 'Branch' },
-        { field: 'supervisor', header: 'Area' },
-        { field: 'remarks', header: 'Region' },
-        { field: 'students', header: 'District' }
+        { field: 'student', header: 'Student Name' },
+        { field: 't_number', header: 'Registration' },
+        { field: 'programme', header: 'Programme' },
+        { field: 'place', header: 'Place' },
+        { field: 'area', header: 'Area' },
+        { field: 'region', header: 'Region' },
+        { field: 'district', header: 'District' },
+        { field: 'phone', header: 'Phone' }
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
     const getModulesDetails = async () => {
+        let formadata = new FormData();
+        formadata.append("studentId", window.localStorage.getItem("std_usr") ? window.localStorage.getItem("std_usr") : "");
+        const bodydata = formadata;
         try {
             const requests = axios.request({
                 method: "POST",
-                url: `${baseURL}place_selection.php`
-            }); setProject((await requests).data);
+                url: `${baseURL}arrival_data.php`,
+                data: bodydata
+            }); setProject((await requests).data.arrival);
+            console.log((await requests).data.arrival);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -234,29 +240,48 @@ const PlaceOfSlection = () => {
         });
         setGlobalFilterValue('');
     };
-
-    const header = (
-        <div className="">
-            <div className="flex justify-content-between">
-
-                <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
-                {/* <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
-                    backgroundColor: 'var(--ocean)', height: '45px'
-                }}><Plus /> Add Student Project</Button> */}
-                <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
-
-                    <br />
-                    Search:
-                    <i className="pi pi-search " />
-                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} className='ms-2' placeholder="Any Column" />
-                </span>
-            </div>
-
-        </div>
-    );
+    const [datatook, setDatatook] =  useState();
+    const handleClickOpen = () => {
+        let filedata = document.querySelector("input[type='file']");
+        filedata.click();
+    }
+    const getClickedData = () => {
+        if(datatook !== undefined){
+            
+        }else{
+            toast.error("you didn't Upload anything, Please Insert file first");
+        }
+    }
     return (
         <div className='view user_board studentprojects'>
             <Toaster ref={toast} position='top-right' color='white' />
+            <div className="dark_overlay" style={{
+                display: `${!visible ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={visible} style={{ width: '30vw' }} onHide={() => setVisible(false)}>
+                    <input type="file" name="" id="" onChange={(e) => console.log(e.target.files[0])} hidden/>
+                    <h2 className="page-title text-bold pb-2 divider">
+                        Upload Arrival Note
+                    </h2>
+
+                    <div className="flex center text-center justify-center align-center">
+                        <div className="image" style={{
+                            height: "150px",
+                            width: "120px"
+                        }} onClick={handleClickOpen}>
+                            <img src="https://cdn-icons-png.flaticon.com/512/2956/2956800.png" alt="" />
+                        </div>
+
+                    </div>
+                    <div className="flex center text-center justify-center align-center mb-2">
+                        <Button className={'active-btn'} style={{
+                            display: 'flex'
+                        }} onClick={() => setVisible(!false)}><i><CloudArrowUpFill /></i> <span className='ml-2 -mt-1' style={{
+                            marginTop: '-2px'
+                        }} onClick={getClickedData}>Upload Arrival</span></Button>
+                    </div>
+                </Dialog>
+            </div>
             <div className="flex_box" style={{
                 '--width': '240px', '--width-two': 'auto', '--height': '100vh'
             }}>
@@ -282,9 +307,21 @@ const PlaceOfSlection = () => {
                             <div className="data_table">
                                 <Tooltip target=".export-buttons>button" position="bottom" />
 
-                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'description', 'domain', 'supervisor', 'remarks', 'students', 'year']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
-                                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} header={header} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
+                                <div className="button p-4" style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "auto 150px"
+                                }}>
+                                    <div className=""></div>
+                                    <Button className={'active-btn'} style={{
+                                        display: 'flex'
+                                    }} onClick={() => setVisible(!false)}><i><CloudArrowUpFill /></i> <span className='ml-2 -mt-1' style={{
+                                        marginTop: '-2px'
+                                    }}>Upload Arrival</span></Button>
+                                </div>
+
+                                <DataTable ref={dt} value={project} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
+                                    paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
                                     onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>
                                     {cols.map((col) => (
                                         <Column key={col.field} className="border_box p-4" style={{ borderColor: "var(--dark) !important" }} sortable field={col.field} header={col.header} />
@@ -299,4 +336,4 @@ const PlaceOfSlection = () => {
     )
 }
 
-export default PlaceOfSlection
+export default ArrivalNote

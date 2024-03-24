@@ -71,7 +71,10 @@ const BarTop = ({ username, menu, extras }) => {
                                             fontSize:"medium",
                                             borderBottom:"1px solid  var(--meal)",
                                             borderRadius:"0px"
-                                        }}className='p-3 hover:bg-black hover:rounded'><BoxArrowRight className='hover:text-white'/> <span className='-mt-1 hover:text-white'> Log  Out</span></Button>
+                                        }}className='p-3 hover:bg-black hover:rounded' onClick={() => {
+                                            window.localStorage.clear();
+                                            navigator("/");
+                                        }}><BoxArrowRight className='hover:text-white'/> <span className='-mt-1 hover:text-white'> Log  Out</span></Button>
                                     </div>
                             </div>
                             

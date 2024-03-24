@@ -25,7 +25,7 @@ const Sidebar = () => {
             "title":"Student Projects"
         },
         {
-            "url":"/",
+            "url":"/arrival_note",
             "icon":<FileEarmarkPdf/>,
             "title":"Arrival Notes"
         },
