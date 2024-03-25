@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { udom_logo } from '../assets'
 import { Button, Row } from 'react-bootstrap'
-import { ArrowDown, BagCheckFill, BoxArrowRight, Fullscreen, Toggle2On } from 'react-bootstrap-icons'
+import { ArrowDown, BagCheckFill, BoxArrowRight, Fullscreen, Lock, LockFill, Toggle2On } from 'react-bootstrap-icons'
 import { useNavigate } from 'react-router-dom'
 import { useIdleTimer } from 'react-idle-timer'
 import { OverlayPanel } from 'primereact/overlaypanel';
+import { Dialog } from 'primereact/dialog'
 
 const BarTop = ({ username, menu, extras }) => {
     const op = useRef(null);
@@ -23,11 +24,69 @@ const BarTop = ({ username, menu, extras }) => {
     });
     useEffect(() => {
         console.log(storage.getItem("std_usr"))
-        if(!storage.getItem("std_usr")) navigator("/");
-      },[])
+        if (!storage.getItem("std_usr")) navigator("/");
+    }, [])
 
+    const [visible, setVisible] = React.useState(!false);
+    const [oldpass, setOldpass] = useState();
+    const [newpass, setNewpass] = useState();
+    const [confirm, setConfirm] = useState();
+
+    const handleSubmit = async() => {
+        
+    }
     return (
         <div onClick={enterFullscreen}>
+            <div className="dark_overlay" style={{
+                display: `${!visible ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
+                    <div className="page-title text-bold" style={{
+                        borderBottom: '1.5px solid var(--shadow_color)',
+                        paddingBottom: '10px'
+                    }}>
+                        UDOM IPT/TP | <span className="" style={{
+                            color: "green"
+                        }}>( {storage.getItem("std_usr") ? storage.getItem("std_usr") : "gemini"} ) </span> Change My Password
+                    </div>
+
+                    <div className="input m-1">
+                        <div className="span">
+                            <h4 className="text-muted page-title text-bold">Old Password</h4>
+                        </div>
+                        <input type="text" className='primary' />
+                    </div>
+                    <div className="input m-1">
+
+                        <div className="flex_2">
+                            <div className="input m-1">
+                                <div className="span">
+                                    <h4 className="text-muted page-title text-bold">New Password</h4>
+                                </div>
+                                <input type="text" className='primary' />
+                            </div>
+                            <div className="input m-1">
+                                <div className="span">
+                                    <h4 className="text-muted page-title text-bold">Confirm New  Password</h4>
+                                </div>
+                                <input type="text" className='primary' />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div className="button text-end justify-end m-2" style={{
+                        display: "grid",
+                        gridTemplateColumns: "auto 200px"
+                    }}>
+                        <div className=""></div>
+                        <button type="butto" className="flex text-sharp text-center text-white" outlined style={{
+                            backgroundColor: 'var(--green)', height: '45px', fontWeight: 300, width: '200px',
+                            textAlign: 'center', position: 'relative', left: '50%', transform: "translateX(-50%)"
+                        }} > <LockFill className='ms-2 mt-1 me-1' /> Change Password</button>
+                    </div>
+                </Dialog>
+            </div>
             <Row className='' style={{
                 background: 'var(--bold-ocean)'
             }}>
@@ -47,37 +106,37 @@ const BarTop = ({ username, menu, extras }) => {
                         </div>
                         <OverlayPanel ref={op} className=''>
                             <div className="divide-y divide-gray-100 shadow-xl rounded" style={{
-                                backgroundColor:'var(--light)'
+                                backgroundColor: 'var(--light)'
                             }}>
-                                    
-                                    <div className="hidden shrink-0 divide-gray-100 devide sm:flex sm:flex-col sm:items-end rounded">
-                                        <Button style={{
-                                            border:"none",
-                                            color:"var(--muted)",
-                                            width:"100%",
-                                            display:"flex",
-                                            gap:"10px",
-                                            background:"none !important",
-                                            fontSize:"medium",
-                                            borderBottom:"1px solid  var(--meal)",
-                                            borderRadius:"0px"
-                                        }} className='p-3 hover:text-white hover:bg-black hover:rounded'><BagCheckFill className='hover:text-white'/> <span className='-mt-1 hover:text-white'>Change  Password</span></Button>
-                                        <Button style={{
-                                            border:"none",
-                                            color:"var(--muted)",
-                                            width:"100%",
-                                            display:"flex",
-                                            gap:"10px",
-                                            fontSize:"medium",
-                                            borderBottom:"1px solid  var(--meal)",
-                                            borderRadius:"0px"
-                                        }}className='p-3 hover:bg-black hover:rounded' onClick={() => {
-                                            window.localStorage.clear();
-                                            navigator("/");
-                                        }}><BoxArrowRight className='hover:text-white'/> <span className='-mt-1 hover:text-white'> Log  Out</span></Button>
-                                    </div>
+
+                                <div className="hidden shrink-0 divide-gray-100 devide sm:flex sm:flex-col sm:items-end rounded">
+                                    <Button style={{
+                                        border: "none",
+                                        color: "var(--muted)",
+                                        width: "100%",
+                                        display: "flex",
+                                        gap: "10px",
+                                        background: "none !important",
+                                        fontSize: "medium",
+                                        borderBottom: "1px solid  var(--meal)",
+                                        borderRadius: "0px"
+                                    }} className='p-3 hover:text-white hover:bg-black hover:rounded'><BagCheckFill className='hover:text-white' /> <span className='-mt-1 hover:text-white'>Change  Password</span></Button>
+                                    <Button style={{
+                                        border: "none",
+                                        color: "var(--muted)",
+                                        width: "100%",
+                                        display: "flex",
+                                        gap: "10px",
+                                        fontSize: "medium",
+                                        borderBottom: "1px solid  var(--meal)",
+                                        borderRadius: "0px"
+                                    }} className='p-3 hover:bg-black hover:rounded' onClick={() => {
+                                        window.localStorage.clear();
+                                        navigator("/");
+                                    }}><BoxArrowRight className='hover:text-white' /> <span className='-mt-1 hover:text-white'> Log  Out</span></Button>
+                                </div>
                             </div>
-                            
+
                         </OverlayPanel>
                         <div className="border_end">
                             <button className='primary'>
@@ -90,7 +149,7 @@ const BarTop = ({ username, menu, extras }) => {
                                     <img src={udom_logo} alt="" />
                                 </div>
                                 <div onClick={(e) => op.current.toggle(e)}>
-                                    <span>{storage.getItem("u_name")? storage.getItem("u_name").split(" ")[0]:"Paulo"}(Student)</span>
+                                    <span>{storage.getItem("u_name") ? storage.getItem("u_name").split(" ")[0] : "Paulo"}(Student)</span>
                                 </div>
                                 <span className='icon-bg'><ArrowDown /></span>
                             </button>

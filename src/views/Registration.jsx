@@ -64,6 +64,9 @@ const Registration = () => {
 
     }
   }
+  // const clear = () => {
+  //   window.localStorage.clear();
+  // }
   const load = () => {
     setLoading(true);
 
@@ -71,6 +74,7 @@ const Registration = () => {
       setLoading(false);
     }, 2000);
   };
+  // useEffect(() => clear());
   return (
     <>
       <div className="load">
