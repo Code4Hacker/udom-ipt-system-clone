@@ -46,7 +46,7 @@ const Registration = () => {
           toast.success("Credential are Valid!\nlogin Successiful...");
           setTimeout(() => {
             toast.loading("Redirecting...");
-            show?setShow(false):setShow(true);
+            show ? setShow(false) : setShow(true);
             setShow(true);
             window.localStorage.setItem("std_usr", username);
             setTimeout(() => {
@@ -75,12 +75,13 @@ const Registration = () => {
     }, 2000);
   };
   // useEffect(() => clear());
+
   return (
     <>
       <div className="load">
-       {
-        show? <Loading message={"Something Wrong"}/>:""
-       }
+        {
+          show ? <Loading message={"Something Wrong"} /> : ""
+        }
       </div>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">

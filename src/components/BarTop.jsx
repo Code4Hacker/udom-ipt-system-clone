@@ -6,6 +6,9 @@ import { useNavigate } from 'react-router-dom'
 import { useIdleTimer } from 'react-idle-timer'
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Dialog } from 'primereact/dialog'
+import toast from 'react-hot-toast'
+import axios from 'axios'
+import { baseURL } from '../paths/base_url';
 
 const BarTop = ({ username, menu, extras }) => {
     const op = useRef(null);
@@ -23,17 +26,58 @@ const BarTop = ({ username, menu, extras }) => {
         timeout: 10 * 60 * 1000
     });
     useEffect(() => {
-        console.log(storage.getItem("std_usr"))
         if (!storage.getItem("std_usr")) navigator("/");
     }, [])
 
-    const [visible, setVisible] = React.useState(!false);
-    const [oldpass, setOldpass] = useState();
-    const [newpass, setNewpass] = useState();
-    const [confirm, setConfirm] = useState();
+    const [visible, setVisible] = React.useState(false);
+    const [oldpass, setOldpass] = useState("");
+    const [newpass, setNewpass] = useState("");
+    const [confirm, setConfirm] = useState("");
 
-    const handleSubmit = async() => {
-        
+    const handleSubmit = async () => {
+        let formdata = new FormData();
+
+        if (newpass.length < 5) {
+            toast.error("please your 'new' password is to short");
+        } else {
+            if (confirm !== newpass) {
+                toast.error("Confirmation Not match!");
+            } else {
+                formdata.append("old", oldpass);
+                formdata.append("new_pwd", newpass);
+                formdata.append("studentId", storage.getItem("std_usr") ? storage.getItem("std_usr") : "");
+                const bodydata = formdata;
+
+                
+
+
+                const dataform = {
+                    method: "POST",
+                    url: `${baseURL}update_password.php`,
+                    data: bodydata
+                }
+                try {
+                    const requests = axios.request(dataform);
+                    console.log((await requests).data);
+                    if((await requests).data.status  !== 200){
+                        toast.error((await requests).data.message);
+                    }else{
+                        toast.success("update Success");
+                        setVisible(false);
+                        setOldpass(""); setNewpass(""); setConfirm("");
+                    }
+                } catch (error) {
+                    toast.error(error);
+
+                }
+            }
+
+
+
+        }
+
+
+
     }
     return (
         <div onClick={enterFullscreen}>
@@ -54,7 +98,7 @@ const BarTop = ({ username, menu, extras }) => {
                         <div className="span">
                             <h4 className="text-muted page-title text-bold">Old Password</h4>
                         </div>
-                        <input type="text" className='primary' />
+                        <input type="password" className='primary' value={oldpass} onChange={(e) => setOldpass(e.target.value)} />
                     </div>
                     <div className="input m-1">
 
@@ -63,13 +107,13 @@ const BarTop = ({ username, menu, extras }) => {
                                 <div className="span">
                                     <h4 className="text-muted page-title text-bold">New Password</h4>
                                 </div>
-                                <input type="text" className='primary' />
+                                <input type="password" className='primary' value={newpass} onChange={(e) => setNewpass(e.target.value)} />
                             </div>
                             <div className="input m-1">
                                 <div className="span">
                                     <h4 className="text-muted page-title text-bold">Confirm New  Password</h4>
                                 </div>
-                                <input type="text" className='primary' />
+                                <input type="password" className='primary' value={confirm} onChange={(e) => setConfirm(e.target.value)} />
                             </div>
                         </div>
 
@@ -80,10 +124,10 @@ const BarTop = ({ username, menu, extras }) => {
                         gridTemplateColumns: "auto 200px"
                     }}>
                         <div className=""></div>
-                        <button type="butto" className="flex text-sharp text-center text-white" outlined style={{
+                        <button type="butto" className="flex text-sharp text-center  text-white" outlined style={{
                             backgroundColor: 'var(--green)', height: '45px', fontWeight: 300, width: '200px',
                             textAlign: 'center', position: 'relative', left: '50%', transform: "translateX(-50%)"
-                        }} > <LockFill className='ms-2 mt-1 me-1' /> Change Password</button>
+                        }} onClick={handleSubmit}> <LockFill className='ms-2 mt-1 me-1' /> Change Password</button>
                     </div>
                 </Dialog>
             </div>
@@ -120,7 +164,7 @@ const BarTop = ({ username, menu, extras }) => {
                                         fontSize: "medium",
                                         borderBottom: "1px solid  var(--meal)",
                                         borderRadius: "0px"
-                                    }} className='p-3 hover:text-white hover:bg-black hover:rounded'><BagCheckFill className='hover:text-white' /> <span className='-mt-1 hover:text-white'>Change  Password</span></Button>
+                                    }} className='p-3 hover:text-white hover:bg-black hover:rounded' onClick={()  => setVisible(!false)}><BagCheckFill className='hover:text-white' /> <span className='-mt-1 hover:text-white'>Change  Password</span></Button>
                                     <Button style={{
                                         border: "none",
                                         color: "var(--muted)",
