@@ -87,7 +87,7 @@ const Registration = () => {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
 
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            IPT SYSTEM SIGN IN
+            IPT ASSESSMENT  SYSTEM SIGN IN
           </h2>
         </div>
 
@@ -97,7 +97,7 @@ const Registration = () => {
           <div className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Email address
+                Username
               </label>
               <div className="mt-2">
                 <input

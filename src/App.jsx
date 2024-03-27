@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { ArrivalNote, Module, PlaceOfSlection, Registration, StudentProjects, UserDashboard } from './views'
+import { ArrivalNote, Module, PlaceOfSlection, Registration, StudentProjects, Testing, UserDashboard } from './views'
 import { PrimeReactProvider } from 'primereact/api'
 import { Toaster } from 'react-hot-toast'
 import { LogBook } from './views'
@@ -18,6 +18,7 @@ const App = () => {
         <Route path='/place_selection' element={<PlaceOfSlection/>} />
         <Route path='/logbook' element={<LogBook/>} />
         <Route path='/arrival_note' element={<ArrivalNote/>} />
+        {/* <Route path='/' element={<Testing/>} /> */}
       </Routes>
     </BrowserRouter>
     </PrimeReactProvider>

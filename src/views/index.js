@@ -5,6 +5,7 @@ import StudentProjects from "./student/StudentProjects";
 import PlaceOfSlection from "./student/PlaceOfSelection";
 import ULogBook  from "./student/LogBook";
 import ArrivalNote from "./student/Arrival";
+import Testing from "./student/Testing";
 
 export{
     UserDashboard,
@@ -13,6 +14,7 @@ export{
     StudentProjects,
     PlaceOfSlection,
     ULogBook as LogBook,
-    ArrivalNote
+    ArrivalNote, 
+    Testing
 
 }
