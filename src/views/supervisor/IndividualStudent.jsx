@@ -26,7 +26,7 @@ const IndividualStudent = () => {
         });
 
         // console.log((await requests).data.arrival[0]);
-        (await requests).data.arrival[0]?getUserCoordinates():toast.error("something happed");
+        (await requests).data.arrival[0] ? getUserCoordinates() : toast.error("something happed");
         setStudent((await requests).data.arrival[0]);
     }
 
@@ -37,18 +37,18 @@ const IndividualStudent = () => {
         } else {
             geolocationAPI.getCurrentPosition(
                 async (position) => {
-                    const { coords } = position;
-                    // setLat(coords.latitude);
-                    // setLong(coords.longitude);
-                    // // codeLatLng(coords.latitude, coords.longitude);
-                    // alert(coords.longitude);
 
                     try {
+                        const { coords } = position;
                         const request_for = axios.request({
-                            url:`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.latitude}&longitude=${coords.longitude}&localityLanguage=en`,
-                            method:"GET"
+                            url: `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.latitude}&longitude=${coords.longitude}&localityLanguage=en`,
+                            method: "GET"
                         });
-                        setNameloc((await request_for).data);
+                        try {
+                            setNameloc((await request_for).data);
+                        } catch (error) {
+                            toast.error(error);
+                        }
                     } catch (error) {
                         toast.error(error);
                     }
@@ -61,7 +61,7 @@ const IndividualStudent = () => {
             console.log("");
         }
     };
-    setTimeout(handleGetUser,10000);
+    setTimeout(handleGetUser, 10000);
     useEffect(() => {
         handleGetUser();
     }, []);
@@ -83,7 +83,7 @@ const IndividualStudent = () => {
                     <div>
                         {/* IndividualStudent {params.id} */}
                         <div className="absolute">
-                            <div><div><iframe className='border_box fullbox' src={`https://www.google.com/maps/embed/v1/directions?origin=${nameloc !== undefined ? nameloc.city +" "+ nameloc.locality+" "+ nameloc.countryName: "udom"}&destination=${student !== null ? student.region + " " + student.district + " " + student.place : "udom, cive"}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}></iframe></div></div>
+                            <div><div><iframe className='border_box fullbox' src={`https://www.google.com/maps/embed/v1/directions?origin=${nameloc !== undefined ? nameloc.city + " " + nameloc.locality + " " + nameloc.countryName : "udom"}&destination=${student !== null ? student.region + " " + student.district + " " + student.place : "udom, cive"}&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8`}></iframe></div></div>
                         </div>
                     </div>
                 </div>

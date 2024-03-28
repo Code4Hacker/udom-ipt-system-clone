@@ -1,7 +1,7 @@
 import React from 'react'
 import { udom_logo } from '../assets'
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { FileEarmarkPdf, GridFill, JournalBookmarkFill, ListTask, Speedometer, Tv, TvFill } from 'react-bootstrap-icons'
+import { FileEarmarkPdf, GridFill, JournalBookmarkFill, ListTask, PeopleFill, Speedometer, Tv, TvFill } from 'react-bootstrap-icons'
 const Sidebar = () => {
     const storage = window.localStorage;
     const links = 
@@ -43,10 +43,15 @@ const Sidebar = () => {
             "title":"Students"
         },]:
         [{
-            "url":"/logbook",
+            "url":"/admin_dashboard",
             "icon":<JournalBookmarkFill/>,
-            "title":"Log  Book"
-        },]
+            "title":"Supervisors"
+        },{
+            "url":"/students",
+            "icon":<PeopleFill/>,
+            "title":"Students"
+        },
+    ]
     
     // const params = useParams();
     // console.log(params.id)

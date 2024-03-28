@@ -66,6 +66,14 @@ const Registration = () => {
                   navigate("/super_dashboard");
                 }, 1500);
                 break;
+              case "administrator":
+                window.localStorage.setItem("admin", username);
+                window.localStorage.setItem("role", "admin");
+                setTimeout(() => {
+                  toast.dismiss();
+                  navigate("/admin_dashboard");
+                }, 1500);
+                break;
               default:
                 break;
             }

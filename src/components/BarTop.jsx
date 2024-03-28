@@ -26,7 +26,7 @@ const BarTop = ({ username, menu, extras }) => {
         timeout: 10 * 60 * 1000
     });
     useEffect(() => {
-        if (!storage.getItem("super") && !storage.getItem("std_usr")) navigator("/");
+        if (!storage.getItem("super") && !storage.getItem("std_usr") && !storage.getItem("admin")) navigator("/");
     }, [])
 
     const [visible, setVisible] = React.useState(false);

@@ -8,6 +8,7 @@ import ArrivalNote from "./student/Arrival";
 import Testing from "./student/Testing";
 import SuperDashboard from "./supervisor/SuperDashboard";
 import IndividualStudent from "./supervisor/IndividualStudent";
+import Dashboard from "./admin/Dashboard";
 export{
     SuperDashboard,
     UserDashboard,
@@ -18,6 +19,7 @@ export{
     ULogBook as LogBook,
     ArrivalNote, 
     Testing,
-    IndividualStudent
+    IndividualStudent,
+    Dashboard
 
 }
