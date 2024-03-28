@@ -26,6 +26,7 @@ const Registration = () => {
     timeout: .11 * 60 * 1000
   });
   const handleSubmit = async () => {
+    window.localStorage.clear();
     toast.dismiss();
     if (username.length < 2) toast.error("username not meet requirements");
     if (password.length < 2) toast.error("password not meet requirements");
@@ -48,11 +49,26 @@ const Registration = () => {
             toast.loading("Redirecting...");
             show ? setShow(false) : setShow(true);
             setShow(true);
-            window.localStorage.setItem("std_usr", username);
-            setTimeout(() => {
-              toast.dismiss();
-              navigate("/user_board");
-            }, 1500);
+            switch (checkingUser.data.success) {
+              case "student":
+                window.localStorage.setItem("std_usr", username);
+                window.localStorage.setItem("role", "std");
+                setTimeout(() => {
+                  toast.dismiss();
+                  navigate("/user_board");
+                }, 1500);
+                break;
+              case "supervisor":
+                window.localStorage.setItem("super", username);
+                window.localStorage.setItem("role", "super");
+                setTimeout(() => {
+                  toast.dismiss();
+                  navigate("/super_dashboard");
+                }, 1500);
+                break;
+              default:
+                break;
+            }
           }, 2000);
         } else {
           toast.error("Fail to Sign In.\ncredential are Incorrect!");

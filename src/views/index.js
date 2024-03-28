@@ -6,8 +6,10 @@ import PlaceOfSlection from "./student/PlaceOfSelection";
 import ULogBook  from "./student/LogBook";
 import ArrivalNote from "./student/Arrival";
 import Testing from "./student/Testing";
-
+import SuperDashboard from "./supervisor/SuperDashboard";
+import IndividualStudent from "./supervisor/IndividualStudent";
 export{
+    SuperDashboard,
     UserDashboard,
     Registration,
     Module,
@@ -15,6 +17,7 @@ export{
     PlaceOfSlection,
     ULogBook as LogBook,
     ArrivalNote, 
-    Testing
+    Testing,
+    IndividualStudent
 
 }

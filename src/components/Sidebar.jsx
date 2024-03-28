@@ -3,8 +3,10 @@ import { udom_logo } from '../assets'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { FileEarmarkPdf, GridFill, JournalBookmarkFill, ListTask, Speedometer, Tv, TvFill } from 'react-bootstrap-icons'
 const Sidebar = () => {
-    const links = [
-        {
+    const storage = window.localStorage;
+    const links = 
+        storage.getItem("std_usr")?
+        [{
             "url":"/user_board",
             "icon":<Speedometer/>,
             "title":"Dashboard"
@@ -33,11 +35,19 @@ const Sidebar = () => {
             "url":"/logbook",
             "icon":<JournalBookmarkFill/>,
             "title":"Log  Book"
-        },
-        
-        
-        
-    ]
+        },]
+        : storage.getItem("super")?
+        [{
+            "url":"/students",
+            "icon":<JournalBookmarkFill/>,
+            "title":"Students"
+        },]:
+        [{
+            "url":"/logbook",
+            "icon":<JournalBookmarkFill/>,
+            "title":"Log  Book"
+        },]
+    
     // const params = useParams();
     // console.log(params.id)
     const location = useLocation();

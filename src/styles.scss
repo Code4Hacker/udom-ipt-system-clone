@@ -198,3 +198,11 @@ span {
 .flex_2 {
     display: flex;
 }
+.fullbox{
+    width: 100vw;
+    margin: 0px;
+    border: none !important;
+    border-radius: 0px !important;
+    height: 86vh;
+    overflow: scroll;
+}

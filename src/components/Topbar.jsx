@@ -9,11 +9,7 @@ const Topbar = ({ headline, subheadline, note}) => {
   const navigator = useNavigate();
 
   const enterFullscreen = () => { };
-  const  storage = window.localStorage;
-
-  useEffect(() => {
-    if(!storage.getItem("std_usr")) navigator("/");
-  },[])
+  
   
   return (
     <div className='' style={{

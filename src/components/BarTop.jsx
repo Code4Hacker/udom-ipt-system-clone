@@ -26,7 +26,7 @@ const BarTop = ({ username, menu, extras }) => {
         timeout: 10 * 60 * 1000
     });
     useEffect(() => {
-        if (!storage.getItem("std_usr")) navigator("/");
+        if (!storage.getItem("super") && !storage.getItem("std_usr")) navigator("/");
     }, [])
 
     const [visible, setVisible] = React.useState(false);
@@ -45,7 +45,7 @@ const BarTop = ({ username, menu, extras }) => {
             } else {
                 formdata.append("old", oldpass);
                 formdata.append("new_pwd", newpass);
-                formdata.append("studentId", storage.getItem("std_usr") ? storage.getItem("std_usr") : "");
+                formdata.append("studentId", storage.getItem("std_usr") ? storage.getItem("std_usr"): storage.getItem("super")? storage.getItem("super") : "");
                 const bodydata = formdata;
 
                 
@@ -91,7 +91,7 @@ const BarTop = ({ username, menu, extras }) => {
                     }}>
                         UDOM IPT/TP | <span className="" style={{
                             color: "green"
-                        }}>( {storage.getItem("std_usr") ? storage.getItem("std_usr") : "gemini"} ) </span> Change My Password
+                        }}>( {storage.getItem("std_usr") ? storage.getItem("std_usr"): storage.getItem("super")? storage.getItem("super") : "gemini"} ) </span> Change My Password
                     </div>
 
                     <div className="input m-1">
