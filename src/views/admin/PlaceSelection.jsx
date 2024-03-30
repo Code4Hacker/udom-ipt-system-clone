@@ -16,6 +16,7 @@ import { Divider } from 'primereact/divider';
 import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
 import { udom_logo } from '../../assets';
+import { useNavigate } from 'react-router';
 
 const PlaceSelection = () => {
     const [project, setProject] = useState([]);
@@ -68,53 +69,15 @@ const PlaceSelection = () => {
             toast.error(`Something went wrong\n${error}`);
         }
     }
+    const navigate  = useNavigate();
     const onRowSelect = (event) => {
-        toast.custom((t) => (
-            <div
-                className={`${t.visible ? 'animate-enter' : 'animate-leave'
-                    } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-            >
-                <div className="flex-1 w-0 p-4">
-                    <div className="flex items-start">
-                        <div className="flex-shrink-0 pt-0.5">
-                            <img
-                                className="h-10 w-10 rounded-full"
-                                src={udom_logo}
-                                alt=""
-                            />
-                        </div>
-                        <div className="ml-3 flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                                {storage.getItem("u_name") ? storage.getItem("u_name") : "Paulo Michael"}
-                            </p>
-                            <p className="mt-1 text-sm text-gray-500">
-                                Are you Sure! Do you  wan't to select
-                                <div className="">
-                                    Name: <span className=" text-indigo-500">{event.data.name}</span>, Category: <span className=" text-indigo-500">{event.data.category}</span> at
-                                    <br />
-                                    <span className=" ">{event.data.region}</span>  <span className=" ">[{event.data.supervisor}]</span>
-
-                                </div>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex border-l border-gray-200">
-                    <button
-                        onClick={() => handleSubmitSelection(event, t)}
-                        className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                        Accept
-                    </button>
-                </div>
-            </div>
-        ), { duration: 10000 })
         jQuery("td").css({
             "background-color": 'var(--light)'
         })
         jQuery(event.originalEvent.target).css({
             "background-color": 'var(--alice)'
         })
+        navigate(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
 
     };
 
@@ -269,9 +232,9 @@ const PlaceSelection = () => {
                 <div className="right-screen-view">
                     <BarTop />
                     <Topbar
-                        headline={"Student Projects Management"}
-                        subheadline={"Projects"}
-                        note={"2022/2023"}
+                        headline={"Place of Selection"}
+                        subheadline={"selections"}
+                        note={""}
                     />
                     <div className="" style={{
                         paddingTop: '20px'

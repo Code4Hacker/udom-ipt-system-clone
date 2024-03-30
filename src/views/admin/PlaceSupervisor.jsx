@@ -5,7 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
-import { CloudArrowUpFill, CloudPlusFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg } from 'react-bootstrap-icons';
+import { CloudArrowUpFill, CloudPlusFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg, Watch } from 'react-bootstrap-icons';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import toast, { Toaster } from 'react-hot-toast';
@@ -17,10 +17,10 @@ import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
 import { AutoComplete } from 'primereact/autocomplete';
 import { Chips } from "primereact/chips";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { udom_logo } from '../../assets';
 
-const Dashboard = () => {
+const PlaceSupervisor = () => {
     const [project, setProject] = useState([]);
     const [filters, setFilters] = useState(null);
     const [selected, setSelected] = useState(null);
@@ -28,48 +28,37 @@ const Dashboard = () => {
     const [visible, setVisible] = useState(false);
     const storage = window.localStorage;
     const handleSubmitSelection = async (event, id) => {
-        let forma = (new FormData());
-        forma.append("studentId", storage.getItem("std_usr"));
-        let bodydata = forma;
+        let formdata = new FormData();
+        const splitter = params.id.split("_13_");
+        formdata.append("place_name", splitter[3]);
+        formdata.append("branch", splitter[4]);
+        formdata.append("area", splitter[2]);
+        formdata.append("region", splitter[0]);
+        formdata.append("district", splitter[1]);
+        formdata.append("supervisor", event.data.super_id);
+
+        const bodydata = formdata;
         try {
             const requests = axios.request({
+                url: `${baseURL}add_place_supe.php`,
                 method: "POST",
-                url: `${baseURL}con_std.php`,
                 data: bodydata
             });
-            const { academic, about, selection } = (await requests).data[0];
 
-            if (selection.length > 0) {
-                toast.error("Sorry, we see that your selection board is not empty... You can't add more!");
+            // console.log((await requests).data);
+            if((await requests).data.status === 200){
 
-            } else {
-                let newData = (new FormData());
-                newData.append("student", storage.getItem("std_usr"));
-                newData.append("selection", event.data.sn);
-
-
-                let bodydata = newData;
-                try {
-                    const requests = axios.request({
-                        method: "POST",
-                        url: `${baseURL}add_select.php`,
-                        data: bodydata
-                    });
-                    // console.log((await requests).data);
-                    if ((await requests).data.status === 200) {
-                        toast.dismiss(id.id);
-                        toast.success("Selection Success");
-                        setTimeout(() => {
-                            toast.dismiss();
-                        }, 3000);
-                    } else { toast.error("Something went wrong, try again!"); }
-                } catch (error) {
-                    toast.error(`Something went wrong\n${error}`);
-                }
+                toast.success("Updated Successiful, "+ (new Date()).toDateString());
+                getSupervisors();
+                getModulesDetails();
+                toast.dismiss();
+            } else{
+                toast.error("something went wrong!");
             }
         } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
+            toast.error(error);
         }
+        // console.log(splitter);
     }
     const onRowSelect = (event) => {
         toast.custom((t) => (
@@ -120,18 +109,7 @@ const Dashboard = () => {
         })
 
     };
-
-    const onRowUnselect = (event) => {
-        toast.error(`You've Unselect -> ${event.data.name}`);
-        jQuery("td").css({
-            "background-color": 'var(--light)'
-        })
-        jQuery(event.originalEvent.target).css({
-            "background-color": 'var(--alice)'
-        })
-
-    };
-    const dt = useRef(null);
+    const dt = React.forwardRef(null);
 
     const cols = [
         { field: 'sn', header: '#' },
@@ -139,13 +117,15 @@ const Dashboard = () => {
         { field: 'department', header: 'Department' },
         { field: 'super_id', header: 'Supervisor ID' },
         { field: 'mobile', header: 'Mobile' },
-        { field: 'location', header: 'Location' }
-    ];
-    const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
+        { field: 'location', header: 'Location' },
+        { field: 'some', header: 'Already Selected at' }
 
+    ];
+    const params = useParams();
+    const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
     const getModulesDetails = async () => {
         let formadata = new FormData();
-        formadata.append("studentId", window.localStorage.getItem("std_usr") ? window.localStorage.getItem("std_usr") : "");
+        formadata.append("location", params.id.split("_13_")[0].trim());
         const bodydata = formadata;
         try {
             const requests = axios.request({
@@ -153,7 +133,7 @@ const Dashboard = () => {
                 url: `${baseURL}supervisors.php`,
                 data: bodydata
             }); setProject((await requests).data);
-            // console.log((await requests).data);
+            console.log((await requests).data);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -240,57 +220,13 @@ const Dashboard = () => {
         });
         setGlobalFilterValue('');
     };
-    const [firstname, setFirstname] = useState("");
-    const [mname, setMname] = useState("");
-    const [lname, setLname] = useState("");
-    const [dname, setDname] = useState("");
-    const [super_id, setSuper_id] = useState("");
-    const [mobile, setMobile] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [location, setLocation] = useState("");
 
-    const handleSubmit = async () => {
-        if (firstname !== "" && mname !== "" && lname !== "" && dname !== "" && super_id !== "" && mobile !== "" && password !== "" && location !== "") {
-            let formdata = new FormData();
-            formdata.append("f_name", firstname);
-            formdata.append("m_name", mname);
-            formdata.append("l_name", lname);
-            formdata.append("department", dname);
-            formdata.append("super_id", super_id);
-            formdata.append("mobile", mobile);
-            formdata.append("e_mail", email);
-            formdata.append("password", password);
-            formdata.append("location", location);
-            formdata.append("role", "supervisor");
-
-            const bodydata = formdata;
-
-            try {
-                const requests = axios.request({
-                    url: `${baseURL}add_supervisor.php`,
-                    method: "POST",
-                    data: bodydata
-                });
-                if((await requests).data.status === 200){
-                    toast.success("Supervisor Added Successiful!");
-                    getModulesDetails();
-                }else toast.error("something wen't wrong. Try  again !")
-            } catch (error) {
-
-            }
-        } else {
-            toast.error("All field must field except email is Optional!");
-        }
-    }
     const header = (
         <div className="">
             <div className="flex justify-content-between">
 
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
-                <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
-                    backgroundColor: 'var(--ocean)', height: '45px'
-                }}><CloudPlusFill />Add New Supervisor</Button>
+
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -302,112 +238,35 @@ const Dashboard = () => {
 
         </div>
     );
+    const [sselected, setSselected] = useState();
+
+    const getSupervisors = async () => {
+        let formdata = new FormData();
+        const splitter = params.id.split("_13_");
+        formdata.append("place_name", splitter[3]);
+        formdata.append("branch", splitter[4]);
+        formdata.append("area", splitter[2]);
+        formdata.append("region", splitter[0]);
+        formdata.append("district", splitter[1]);
+
+        const bodydata = formdata;
+        try {
+            const requests = axios.request({
+                url: `${baseURL}check_super.php`,
+                method: "POST",
+                data: bodydata
+            });
+
+            // console.log((await requests).data);
+            setSselected((await requests).data);
+        } catch (error) {
+            toast.error(error);
+        }
+        // console.log(splitter);
+    }
+    useEffect(() => { getSupervisors() }, []);
     return (
         <div className='view user_board'>
-            <div className="dark_overlay" style={{
-                display: `${!visible ? 'none' : 'block'}`
-            }}>
-                <Dialog header="" className='white_box modal_box' visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
-                    <h3 className="page-title text-bold" style={{
-                        borderBottom: '1.5px solid var(--shadow_color)',
-                        paddingBottom: '10px'
-                    }}>
-                        Add Supervisor
-                    </h3>
-                    <div className="flex_2">
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Supervisor Firstname <span>*</span></h4>
-                            </div>
-                            <input type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)}/>
-
-                        </div>
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Middle Name <span>*</span></h4>
-                            </div>
-                            <input type="text" value={mname} onChange={(e) => setMname(e.target.value)}/>
-                        </div>
-                    </div>
-                    <div className="input m-1">
-                        <div className="span">
-                            <h4 className="text-muted page-title">Supervisor Last Name <span>*</span></h4>
-                        </div>
-                        <input type="text" value={lname} onChange={(e) => setLname(e.target.value)}/>
-                    </div>
-                    <div className="flex_2">
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Department <span>*</span></h4>
-                            </div>
-                            <input type="text" value={dname} onChange={(e) => setDname(e.target.value)}/>
-
-                        </div>
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Supervisor  ID <span>*</span></h4>
-                            </div>
-                            <input type="text" value={super_id} onChange={(e) => setSuper_id(e.target.value)}/>
-                        </div>
-                    </div>
-
-                    <div className="flex_2">
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Mobile <span>*</span></h4>
-                            </div>
-                            <input type="text" value={mobile} onChange={(e) => setMobile(e.target.value)}/>
-
-                        </div>
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Email <i>(option)</i></h4>
-                            </div>
-                            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                        </div>
-                    </div>
-                    <div className="flex_2">
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Password <span>*</span></h4>
-                            </div>
-                            <input type="text" value={password} onChange={(e) => setPassword(e.target.value)}/>
-
-                        </div>
-
-
-                    </div>
-                    <div className="input m-1">
-                        <div className="span">
-                            <h4 className="text-muted page-title">Location <span>*</span></h4>
-                        </div>
-                        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)}/>
-                    </div>
-
-                    <div className="button p-4" style={{
-                        display: "grid",
-                        gridTemplateColumns: "auto 150px auto"
-                    }}>
-                        <div className=""></div>
-                        <Button className={'active-btn'} style={{
-                            display: 'flex'
-                        }} onClick={() => {
-                            handleSubmit();
-                            setVisible(false);
-
-                        }}><i><CloudPlusFill /></i> <span className='ml-2 -mt-1' style={{
-                            marginTop: '-2px'
-                        }}>Add Supervisor</span></Button>
-                    </div>
-                </Dialog>
-            </div>
             <div className="flex_box" style={{
                 '--width': '240px', '--width-two': 'auto', '--height': '100vh'
             }}>
@@ -418,23 +277,72 @@ const Dashboard = () => {
                     <BarTop />
                     <Topbar
                         headline={"Welcome to Academic Year"}
-                        subheadline={"Dashboard"}
+                        subheadline={"PSupervisor"}
                         note={"2022/2023"}
                     />
                     <div className="" style={{
                         paddingTop: '20px'
                     }}>
                         <div className="border_box" style={{
-                            paddingLeft: '10px'
+                            paddingLeft: '0px'
                         }}>
+                            <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
+                                <div
+                                    className="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl"
+                                    aria-hidden="true"
+                                >
+                                    <div
+                                        className="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30"
+                                        style={{
+                                            clipPath:
+                                                'polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)',
+                                        }}
+                                    />
+                                </div>
+                                <div
+                                    className="absolute left-[max(45rem,calc(50%+8rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl"
+                                    aria-hidden="true"
+                                >
+                                    <div
+                                        className="aspect-[577/310] w-[36.0625rem] bg-gradient-to-r from-[#ff80b5] to-[#9089fc] opacity-30"
+                                        style={{
+                                            clipPath:
+                                                'polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)',
+                                        }}
+                                    />
+                                </div>
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                    <p className="text-sm leading-6 text-gray-900">
+                                        <strong className="font-semibold">Selected Supervisor</strong>
+                                        <svg viewBox="0 0 2 2" className="mx-2 inline h-0.5 w-0.5 fill-current" aria-hidden="true">
+                                            <circle cx={1} cy={1} r={1} />
+                                        </svg>
+                                        {sselected !== undefined && sselected.supervisor?.length > 0 ? sselected.supervisor.map((data, key) => <span key={key}>{data.f_name} {data.m_name} {data.l_name}</span>) : " No selected Supervisor"}
+                                        {console.log(sselected)}
+                                    </p>
+                                    {/* {sselected !== undefined && sselected.supervisor?.length > 0 ? <button
+                                        href="#"
+                                        className="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
+                                    >
+                                        Remove Supervisor <span aria-hidden="true">&rarr;</span>
+                                    </button> : ""} */}
+
+                                </div>
+                                <div className="flex flex-1 justify-end">
+                                    <button type="button" className="-m-3 p-3 focus-visible:outline-offset-[-4px]">
+                                        <span className="sr-only">Dismiss</span>
+                                        {/* <Watch className="h-5 w-5 text-gray-900" aria-hidden="true" /> */}
+                                    </button>
+                                </div>
+                            </div>
                             <div className="data_table">
                                 <Tooltip target=".export-buttons>button" position="bottom" />
-                               
-                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'department', 'super_id', 'mobile', 'location']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Supervisor Yet." header={header}
+
+                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'department', 'super_id', 'mobile', 'location', 'some']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Supervisor Yet." header={header}
                                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                                     currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
                                     onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>
-                                    {cols.map((col) => (
+                                    {cols.map((col, key) => (
                                         <Column key={col.field} className="border_box p-4" style={{ borderColor: "var(--dark) !important" }} sortable field={col.field} header={col.header} />
                                     ))}
                                 </DataTable>
@@ -447,4 +355,4 @@ const Dashboard = () => {
     )
 }
 
-export default Dashboard
+export default PlaceSupervisor
