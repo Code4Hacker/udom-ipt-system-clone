@@ -9,6 +9,7 @@ import Testing from "./student/Testing";
 import SuperDashboard from "./supervisor/SuperDashboard";
 import IndividualStudent from "./supervisor/IndividualStudent";
 import Dashboard from "./admin/Dashboard";
+import PlaceSelection from "./admin/PlaceSelection";
 export{
     SuperDashboard,
     UserDashboard,
@@ -20,6 +21,7 @@ export{
     ArrivalNote, 
     Testing,
     IndividualStudent,
-    Dashboard
+    Dashboard,
+    PlaceSelection
 
 }
