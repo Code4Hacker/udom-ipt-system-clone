@@ -61,7 +61,7 @@ const IndividualStudent = () => {
             console.log("");
         }
     };
-    setTimeout(handleGetUser, 10000);
+    // setTimeout(handleGetUser, 10000); 
     useEffect(() => {
         handleGetUser();
     }, []);

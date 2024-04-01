@@ -38,7 +38,7 @@ const Sidebar = () => {
         },]
         : storage.getItem("super")?
         [{
-            "url":"/students",
+            "url":"/super_dashboard",
             "icon":<JournalBookmarkFill/>,
             "title":"Students"
         },]:

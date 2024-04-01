@@ -17,6 +17,7 @@ import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
 import { udom_logo } from '../../assets';
 import { useNavigate } from 'react-router';
+import { AutoComplete } from 'primereact/autocomplete';
 
 const PlaceSelection = () => {
     const [project, setProject] = useState([]);
@@ -24,7 +25,30 @@ const PlaceSelection = () => {
     const [selected, setSelected] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [visible, setVisible] = useState(false);
+    const [selectedDomain, setselectedDomain] = useState(null);
+
+    const [Domains, setDomains] = useState([]);
+    const [filteredDomains, setFilteredDomains] = useState(null);
     const storage = window.localStorage;
+
+    const search2 = (event) => {
+
+        setTimeout(() => {
+            let _filteredDomains;
+
+            if (!event.query.trim().length) {
+                _filteredDomains = [...Domains];
+            }
+            else {
+                _filteredDomains = Domains.filter((Supervisor) => {
+                    // console.log("filtered", _filteredDomains)
+                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
+                });
+            }
+
+            setFilteredDomains(_filteredDomains);
+        }, 250);
+    }
     const handleSubmitSelection = async (event, id) => {
         let forma = (new FormData());
         forma.append("studentId", storage.getItem("std_usr"));
@@ -117,6 +141,7 @@ const PlaceSelection = () => {
     }
     useEffect(() => {
         getModulesDetails();
+        getModulesDomain();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -203,9 +228,9 @@ const PlaceSelection = () => {
             <div className="flex justify-content-between">
 
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
-                {/* <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
+                <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
                     backgroundColor: 'var(--ocean)', height: '45px'
-                }}><Plus /> Add Student Project</Button> */}
+                }}><Plus /> Add Place Details</Button>
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -217,12 +242,56 @@ const PlaceSelection = () => {
 
         </div>
     );
+    const getModulesDomain = async () => {
+        try {
+            const requests = axios.request({
+                method: "POST",
+                url: `${baseURL}domains.php`
+            });
+            setDomains((await requests).data);
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
+        }
+    }
     return (
         <div className='view user_board studentprojects'>
             <Toaster ref={toast} position='top-right' color='white' />
+            <div className="dark_overlay" style={{
+                display: `${!visible ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={visible} style={{ width: '50vw' }} onHide={() => setVisible(false)}>
+                    <h3 className="page-title text-bold" style={{
+                        borderBottom: '1.5px solid var(--shadow_color)',
+                        paddingBottom: '10px'
+                    }}>
+                        Add Supervisor
+                    </h3>
+                    <div className="flex_2">
+
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Place Name <span>*</span></h4>
+                            </div>
+                            <input type="text"/>
+
+                        </div>
+
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Middle Name <span>*</span></h4>
+                            </div>
+                            <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
+                                border: "none !important"
+
+                            }} dropdown />
+                        </div>
+                    </div>
+                </Dialog>
+            </div>
             <div className="flex_box" style={{
                 '--width': '240px', '--width-two': 'auto', '--height': '100vh'
             }}>
+
                 <div className="left-screen-view" style={{
                     position: 'relative',
                     zIndex: "50"
