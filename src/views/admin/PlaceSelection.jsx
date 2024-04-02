@@ -299,9 +299,43 @@ const PlaceSelection = () => {
     const [region, setRegion] = useState("");
     const [district, setDistrict] = useState("");
 
-    const handleSubmit = async() => {
-        console.log(selectedSupervisor);
-        if(place_name !== "" && capacity !== "" && branch !== "" && area !== "" && region !== "" && district !== "" && selectedDomain !== null && selectedSupervisor !== null  );
+    const handleSubmit = async () => {
+        console.log(selectedSupervisor, selectedDomain);
+        if (place_name !== "" && capacity !== "" && branch !== "" && area !== "" && region !== "" && district !== "" && selectedDomain !== null) {
+            let formdata = new FormData();
+            formdata.append("place_name", place_name);
+            formdata.append("category", selectedDomain.name);
+            formdata.append("capacity", capacity);
+            formdata.append("branch", branch);
+            formdata.append("area", area);
+            formdata.append("region", region);
+            formdata.append("district", district);
+            if(selectedSupervisor !== null){
+                formdata.append("supervisor",selectedSupervisor.super);
+            }
+            const bodydata = formdata;
+
+            try {
+                const request = axios.request({
+                    url:`${baseURL}add_place.php`,
+                    method:"POST",
+                    data: bodydata
+                });
+                if((await  request).data.status === 200){
+                    toast.success("Place Added Successiful!");
+                    setVisible(false);
+                    getModulesDetails();
+                    setPlace_name("");setBranch("");setCapacity(); setArea(""); setDistrict(""); setRegion("");
+                }else{
+                    toast.error("Something went wrong!");
+                }
+            } catch (error) {
+                
+            }
+
+        } else {
+            toast.error("All field Required to be filled!");
+        }
     }
     return (
         <div className='view user_board studentprojects'>
@@ -322,7 +356,7 @@ const PlaceSelection = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">Place Name <span>*</span></h4>
                             </div>
-                            <input type="text" value={place_name} onChange={(e)  => setPlace_name(e.target.value)}/>
+                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
 
                         </div>
 
@@ -341,13 +375,13 @@ const PlaceSelection = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">Capacity <span>*</span></h4>
                             </div>
-                            <input type="number"  value={capacity} onChange={(e)  => setCapacity(e.target.value)}/>
+                            <input type="number" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
                         </div>
                         <div className="input m-1">
                             <div className="span">
                                 <h4 className="text-muted page-title">Branch <span>*</span></h4>
                             </div>
-                            <input type="text"  value={branch} onChange={(e)  => setBranch(e.target.value)} />
+                            <input type="text" value={branch} onChange={(e) => setBranch(e.target.value)} />
                         </div>
                     </div>
                     <div className="flex_2">
@@ -355,13 +389,13 @@ const PlaceSelection = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">Area <span>*</span></h4>
                             </div>
-                            <input type="text" />
+                            <input type="text" value={area} onChange={(e) => setArea(e.target.value)} />
                         </div>
                         <div className="input m-1">
                             <div className="span">
                                 <h4 className="text-muted page-title">Region <span>*</span></h4>
                             </div>
-                            <input type="text" />
+                            <input type="text" value={region} onChange={(e) => setRegion(e.target.value)} />
                         </div>
                     </div>
                     <div className="flex_2">
@@ -370,7 +404,7 @@ const PlaceSelection = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">District <span>*</span></h4>
                             </div>
-                            <input type="text" />
+                            <input type="text" value={district} onChange={(e) => setDistrict(e.target.value)} />
 
                         </div>
 
@@ -385,7 +419,7 @@ const PlaceSelection = () => {
                         </div>
                     </div>
                     <div className="button text-center">
-                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined  style={{
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                             backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
                         }} onClick={handleSubmit}> <PlusCircle />Save the place</Button>
                     </div>
