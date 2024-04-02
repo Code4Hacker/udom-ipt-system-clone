@@ -155,6 +155,25 @@ export default function BasicTabs() {
     const currentDate = () => {
         return (new Date()).toDateString();
     }
+    const [seelog, setSeelog] = React.useState(false);
+    const check_for_arrival = async() => {
+        let formdata = new FormData();
+        formdata.append("student", window.localStorage.getItem("std_usr") ? window.localStorage.getItem("std_usr"):"");
+
+        const bodydata = formdata;
+
+        try {
+            const requests = axios.request({
+                url:`${baseURL}check_exist_note.php`,
+                method:"POST",
+                data: bodydata
+            });
+            (await requests).data.status === 200? setSeelog(true):""
+        } catch (error) {
+            toast.error(error);
+        }
+    }
+    React.useEffect(() => {check_for_arrival()},[]);
     return (
         <div className='view user_board'>
             <div className="flex_box" style={{
@@ -225,61 +244,66 @@ export default function BasicTabs() {
                         note={""}
                     />
                     <div className="border_box">
-                        <div className="">
-                            <div className="button ps-4 pt-4" style={{
-                                maxWidth: '420px',
-                                position: 'relative',
-                                display: "grid",
-                                gridTemplateColumns: "auto auto"
-                            }}>
-                                <Button className={'active-btn'} style={{
-                                    display: 'flex'
-                                }} onClick={() => setVisible(!false)}><i><PatchPlusFill /></i> <span className='ml-2 -mt-1' style={{
-                                    marginTop: '-2px'
-                                }}>Fill LogBook</span></Button>
-                                <Button className={'active-btn'} style={{
-                                    display: 'flex'
-                                }}><i><CloudDownloadFill /></i> <span className='ml-2 -mt-1' style={{
-                                    marginTop: '-2px'
-                                }}>Download LogBook</span></Button>
-                            </div>
-                            <Box sx={{ width: '100%' }}>
-                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                                        {
-                                            weeks.weeks.map((data, key) => <Tab label={data} {...a11yProps(0)} key={key} className='text-capitalize' onClick={() => getStudentDetails(data)} />)
-                                        }
-                                    </Tabs>
-                                </Box>
-                                {
-                                    weeks.weeks.map((data, key) => <ULogBook value={value} index={key} key={key}>
-                                        {
-                                            logbooks.logbook !== undefined && logbooks.logbook?.length > 0 ? logbooks.logbook.map((data, key) =>
-                                                <div className="jornal_list">
-                                                    <div className="jt-title">
-                                                        <span>{(data.date_created).replace("-", "/").replace("-", "/")}</span>
-                                                    </div>
-                                                    <div className="jt-line">
-                                                        <div className="ball"></div>
-                                                    </div>
-                                                    <div className="jt-content">
-                                                        <h4 className="page-title capitalize text-bold">Day: {changeTime(data.date_created)}</h4>
-                                                        <h4 className="page-title capitalize  mt-2">Work Hours: {data.work_hours}</h4>
-                                                        <br />
-                                                        <span className='capitalize mt-2' style={{
-                                                            color: "var(--muted)"
-                                                        }}>{data.task_description}</span>
-                                                    </div>
-
-                                                </div>
-                                            ) : <Loading />
-
-                                        }
-                                    </ULogBook>)
-                                }
-
-                            </Box>
+                       {
+                        seelog?  <div className="">
+                        <div className="button ps-4 pt-4" style={{
+                            maxWidth: '420px',
+                            position: 'relative',
+                            display: "grid",
+                            gridTemplateColumns: "auto auto"
+                        }}>
+                            <Button className={'active-btn'} style={{
+                                display: 'flex'
+                            }} onClick={() => setVisible(!false)}><i><PatchPlusFill /></i> <span className='ml-2 -mt-1' style={{
+                                marginTop: '-2px'
+                            }}>Fill LogBook</span></Button>
+                            <Button className={'active-btn'} style={{
+                                display: 'flex'
+                            }}><i><CloudDownloadFill /></i> <span className='ml-2 -mt-1' style={{
+                                marginTop: '-2px'
+                            }}>Download LogBook</span></Button>
                         </div>
+                        <Box sx={{ width: '100%' }}>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                                    {
+                                        weeks.weeks.map((data, key) => <Tab label={data} {...a11yProps(0)} key={key} className='text-capitalize' onClick={() => getStudentDetails(data)} />)
+                                    }
+                                </Tabs>
+                            </Box>
+                            {
+                                weeks.weeks.map((data, key) => <ULogBook value={value} index={key} key={key}>
+                                    {
+                                        logbooks.logbook !== undefined && logbooks.logbook?.length > 0 ? logbooks.logbook.map((data, key) =>
+                                            <div className="jornal_list">
+                                                <div className="jt-title">
+                                                    <span>{(data.date_created).replace("-", "/").replace("-", "/")}</span>
+                                                </div>
+                                                <div className="jt-line">
+                                                    <div className="ball"></div>
+                                                </div>
+                                                <div className="jt-content">
+                                                    <h4 className="page-title capitalize text-bold">Day: {changeTime(data.date_created)}</h4>
+                                                    <h4 className="page-title capitalize  mt-2">Work Hours: {data.work_hours}</h4>
+                                                    <br />
+                                                    <span className='capitalize mt-2' style={{
+                                                        color: "var(--muted)"
+                                                    }}>{data.task_description}</span>
+                                                </div>
+
+                                            </div>
+                                        ) : <Loading />
+
+                                    }
+                                </ULogBook>)
+                            }
+
+                        </Box>
+                    </div>:
+                    <div className="center text-center text-ellipsis p-5 m-5 card text-sm">
+                        You Need to Upload Arrival Note first !
+                    </div>
+                       }
                     </div>
                 </div>
             </div>
