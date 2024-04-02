@@ -31,6 +31,28 @@ const PlaceSelection = () => {
     const [filteredDomains, setFilteredDomains] = useState(null);
     const storage = window.localStorage;
 
+    const [Supervisors, setSupervisors] = useState([]);
+    const [selectedSupervisor, setSelectedSupervisor] = useState(null);
+    const [filteredSupervisors, setFilteredSupervisors] = useState(null);
+
+    const search3 = (event) => {
+
+        setTimeout(() => {
+            let _filteredSupervisors;
+
+            if (!event.query.trim().length) {
+                _filteredSupervisors = [...Supervisors];
+            }
+            else {
+                _filteredSupervisors = Supervisors.filter((Supervisor) => {
+                    console.log("filtered", _filteredSupervisors)
+                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
+                });
+            }
+
+            setFilteredSupervisors(_filteredSupervisors);
+        }, 250);
+    }
     const search2 = (event) => {
 
         setTimeout(() => {
@@ -48,6 +70,20 @@ const PlaceSelection = () => {
 
             setFilteredDomains(_filteredDomains);
         }, 250);
+    }
+    const getModulesSuper = async () => {
+        try {
+            const requests = axios.request({
+                method: "POST",
+                url: `${baseURL}supervisor.php`
+            });
+            setSupervisors((await requests).data);
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
+        }
+    }
+    const superchange = (e) => {
+        setSelectedSupervisor(e.value);
     }
     const handleSubmitSelection = async (event, id) => {
         let forma = (new FormData());
@@ -68,7 +104,7 @@ const PlaceSelection = () => {
                 let newData = (new FormData());
                 newData.append("student", storage.getItem("std_usr"));
                 newData.append("selection", event.data.sn);
-                
+
 
                 let bodydata = newData;
                 try {
@@ -78,13 +114,13 @@ const PlaceSelection = () => {
                         data: bodydata
                     });
                     console.log((await requests).data);
-                    if((await requests).data.status === 200) {
-                      toast.dismiss(id.id);
-                      toast.success("Selection Success");
-                      setTimeout(() => {
-                        toast.dismiss();
-                      }, 3000);
-                    }else{toast.error("Something went wrong, try again!");}
+                    if ((await requests).data.status === 200) {
+                        toast.dismiss(id.id);
+                        toast.success("Selection Success");
+                        setTimeout(() => {
+                            toast.dismiss();
+                        }, 3000);
+                    } else { toast.error("Something went wrong, try again!"); }
                 } catch (error) {
                     toast.error(`Something went wrong\n${error}`);
                 }
@@ -93,7 +129,7 @@ const PlaceSelection = () => {
             toast.error(`Something went wrong\n${error}`);
         }
     }
-    const navigate  = useNavigate();
+    const navigate = useNavigate();
     const onRowSelect = (event) => {
         jQuery("td").css({
             "background-color": 'var(--light)'
@@ -141,7 +177,8 @@ const PlaceSelection = () => {
     }
     useEffect(() => {
         getModulesDetails();
-        getModulesDomain(); 
+        getModulesDomain();
+        getModulesSuper();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -253,6 +290,19 @@ const PlaceSelection = () => {
             toast.error(`Something went wrong\n${error}`);
         }
     }
+    // inputs states
+
+    const [place_name, setPlace_name] = useState("");
+    const [capacity, setCapacity] = useState("");
+    const [branch, setBranch] = useState("");
+    const [area, setArea] = useState("");
+    const [region, setRegion] = useState("");
+    const [district, setDistrict] = useState("");
+
+    const handleSubmit = async() => {
+        console.log(selectedSupervisor);
+        if(place_name !== "" && capacity !== "" && branch !== "" && area !== "" && region !== "" && district !== "" && selectedDomain !== null && selectedSupervisor !== null  );
+    }
     return (
         <div className='view user_board studentprojects'>
             <Toaster ref={toast} position='top-right' color='white' />
@@ -264,7 +314,7 @@ const PlaceSelection = () => {
                         borderBottom: '1.5px solid var(--shadow_color)',
                         paddingBottom: '10px'
                     }}>
-                        Add Supervisor
+                        Add Place Details
                     </h3>
                     <div className="flex_2">
 
@@ -272,19 +322,72 @@ const PlaceSelection = () => {
                             <div className="span">
                                 <h4 className="text-muted page-title">Place Name <span>*</span></h4>
                             </div>
-                            <input type="text"/>
+                            <input type="text" value={place_name} onChange={(e)  => setPlace_name(e.target.value)}/>
 
                         </div>
 
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Middle Name <span>*</span></h4>
+                                <h4 className="text-muted page-title">Category/Domain <span>*</span></h4>
                             </div>
                             <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
                                 border: "none !important"
 
                             }} dropdown />
                         </div>
+                    </div>
+                    <div className="flex_2">
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Capacity <span>*</span></h4>
+                            </div>
+                            <input type="number"  value={capacity} onChange={(e)  => setCapacity(e.target.value)}/>
+                        </div>
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Branch <span>*</span></h4>
+                            </div>
+                            <input type="text"  value={branch} onChange={(e)  => setBranch(e.target.value)} />
+                        </div>
+                    </div>
+                    <div className="flex_2">
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Area <span>*</span></h4>
+                            </div>
+                            <input type="text" />
+                        </div>
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Region <span>*</span></h4>
+                            </div>
+                            <input type="text" />
+                        </div>
+                    </div>
+                    <div className="flex_2">
+
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">District <span>*</span></h4>
+                            </div>
+                            <input type="text" />
+
+                        </div>
+
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Supervisor <span>*</span></h4>
+                            </div>
+                            <AutoComplete className='auto_cp' field="name" value={selectedSupervisor} suggestions={filteredSupervisors} completeMethod={search3} onChange={superchange} style={{
+                                border: "none !important"
+
+                            }} dropdown />
+                        </div>
+                    </div>
+                    <div className="button text-center">
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined  style={{
+                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
+                        }} onClick={handleSubmit}> <PlusCircle />Save the place</Button>
                     </div>
                 </Dialog>
             </div>
