@@ -81,7 +81,6 @@ const StudentProjects = () => {
             data: bodyContent
 
         }
-        // console.log("remarks"+remarks+", domain"+selectedDomain.name)
 
         try {
             const request = axios.request(

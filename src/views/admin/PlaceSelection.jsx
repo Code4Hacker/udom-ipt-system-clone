@@ -169,7 +169,7 @@ const PlaceSelection = () => {
         try {
             const requests = axios.request({
                 method: "POST",
-                url: `${baseURL}place_selection.php`
+                url: `${baseURL}adm_place.php`
             }); setProject((await requests).data);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);

@@ -11,6 +11,7 @@ import IndividualStudent from "./supervisor/IndividualStudent";
 import Dashboard from "./admin/Dashboard";
 import PlaceSelection from "./admin/PlaceSelection";
 import PlaceSupervisor from "./admin/PlaceSupervisor";
+import StudentAdm from "./admin/StudentAdm";
 export{
     SuperDashboard,
     UserDashboard,
@@ -24,6 +25,7 @@ export{
     IndividualStudent,
     Dashboard,
     PlaceSelection,
-    PlaceSupervisor
+    PlaceSupervisor,
+    StudentAdm
 
 }

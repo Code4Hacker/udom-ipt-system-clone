@@ -51,7 +51,7 @@ const Sidebar = () => {
             "icon":<MapFill/>,
             "title":"Place of Selections"
         },{
-            "url":"/students",
+            "url":"/admin_students",
             "icon":<PeopleFill/>,
             "title":"Students"
         },
