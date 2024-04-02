@@ -141,7 +141,7 @@ const PlaceSelection = () => {
     }
     useEffect(() => {
         getModulesDetails();
-        getModulesDomain();
+        getModulesDomain(); 
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
