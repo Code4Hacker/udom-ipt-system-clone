@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Button } from 'primereact/button';
 // import { Checkbox } from 'primereact/checkbox';
 import { InputText } from 'primereact/inputtext'
-import React from 'react'
+import React, { useRef } from 'react'
 import { useState } from 'react'
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ import { baseURL } from '../paths/base_url';
 import { useIdleTimer } from 'react-idle-timer';
 import { useEffect } from 'react';
 import Loading from '../components/Loading';
-
+import emailjs from '@emailjs/browser';
 const Registration = () => {
   const [checked1, setChecked1] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -99,6 +99,77 @@ const Registration = () => {
     }, 2000);
   };
   // useEffect(() => clear());
+    const form = useRef();
+  
+    const sendEmail = async() => {
+      // e.preventDefault();
+    //   const data = {
+    //     service_id: 'service_r77en09',
+    //     template_id: 'template_daikb7k',
+    //     user_id: 'pGoqf69cjpYVPD8xZ',
+    //     template_params: {
+    //       to_name:'James',
+    //       email:'paulprogrammer947@gmail.com',
+    //       message:'hello from emjs gemini'
+    //     }
+    // };
+    //   const responses = axios.request({
+    //     url:"https://api.emailjs.com/api/v1.0/email/send",
+    //     method:"POST",
+    //     headers:{
+    //       'Content-Type': 'application/json',
+    //       'Accept': 'application/json',
+    //   },
+    //   body: JSON.stringify(data)
+    //   });
+      // console.log((await responses).data)
+      try {
+        const response = await emailjs.send('service_r77en09','template_daikb7k', {name:"GeminiArc", recipient:"paulprogrammer947@gmail.com", from_name:"GeminiArc2", "message":"I miss you, please work"});
+
+        console.log(response);
+      } catch (error) {
+        console.log("ERROR", error)
+      }
+      
+    }
+
+    // const sendt = async() => {
+    //   const client = new SMTPClient({
+    //     user: 'Gemini Child',
+    //     password: 'Paul1322',
+    //     host: 'smtp.paulprogrammer947.com',
+    //     ssl: true,
+    //   });
+      
+    //   try {
+    //     const message = await client.sendAsync({
+    //       text: 'i hope this works',
+    //       from: 'you <username@your-email.com>',
+    //       to: 'someone <someone@your-email.com>, another <another@your-email.com>',
+    //       cc: 'else <else@your-email.com>',
+    //       subject: 'testing emailjs',
+    //     });
+    //     console.log(message);
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // }
+    useEffect(() => { 
+      emailjs.init("pGoqf69cjpYVPD8xZ")
+    //   (function(){
+    //     emailjs.init({
+    //       publicKey: "pGoqf69cjpYVPD8xZ",
+    //     });
+    //  })();
+      sendEmail()
+    },[])
+
+
+
+
+
+
+
 
   return (
     <>
