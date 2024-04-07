@@ -102,29 +102,9 @@ const Registration = () => {
     const form = useRef();
   
     const sendEmail = async() => {
-      // e.preventDefault();
-    //   const data = {
-    //     service_id: 'service_r77en09',
-    //     template_id: 'template_daikb7k',
-    //     user_id: 'pGoqf69cjpYVPD8xZ',
-    //     template_params: {
-    //       to_name:'James',
-    //       email:'paulprogrammer947@gmail.com',
-    //       message:'hello from emjs gemini'
-    //     }
-    // };
-    //   const responses = axios.request({
-    //     url:"https://api.emailjs.com/api/v1.0/email/send",
-    //     method:"POST",
-    //     headers:{
-    //       'Content-Type': 'application/json',
-    //       'Accept': 'application/json',
-    //   },
-    //   body: JSON.stringify(data)
-    //   });
-      // console.log((await responses).data)
       try {
         const response = await emailjs.send('service_r77en09','template_daikb7k', {name:"GeminiArc", recipient:"paulprogrammer947@gmail.com", from_name:"GeminiArc2", "message":"I miss you, please work"});
+        
 
         console.log(response);
       } catch (error) {
@@ -133,36 +113,10 @@ const Registration = () => {
       
     }
 
-    // const sendt = async() => {
-    //   const client = new SMTPClient({
-    //     user: 'Gemini Child',
-    //     password: 'Paul1322',
-    //     host: 'smtp.paulprogrammer947.com',
-    //     ssl: true,
-    //   });
-      
-    //   try {
-    //     const message = await client.sendAsync({
-    //       text: 'i hope this works',
-    //       from: 'you <username@your-email.com>',
-    //       to: 'someone <someone@your-email.com>, another <another@your-email.com>',
-    //       cc: 'else <else@your-email.com>',
-    //       subject: 'testing emailjs',
-    //     });
-    //     console.log(message);
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // }
     useEffect(() => { 
-      emailjs.init("pGoqf69cjpYVPD8xZ")
-    //   (function(){
-    //     emailjs.init({
-    //       publicKey: "pGoqf69cjpYVPD8xZ",
-    //     });
-    //  })();
-      sendEmail()
-    },[])
+      // emailjs.init("pGoqf69cjpYVPD8xZ");
+      // sendEmail()
+    },[]);
 
 
 
