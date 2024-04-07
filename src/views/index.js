@@ -7,11 +7,12 @@ import ULogBook  from "./student/LogBook";
 import ArrivalNote from "./student/Arrival";
 import Testing from "./student/Testing";
 import SuperDashboard from "./supervisor/SuperDashboard";
-import IndividualStudent from "./supervisor/IndividualStudent";
+import IndividualStudent from "../subviews/IndividualStudent";
 import Dashboard from "./admin/Dashboard";
 import PlaceSelection from "./admin/PlaceSelection";
 import PlaceSupervisor from "./admin/PlaceSupervisor";
 import StudentAdm from "./admin/StudentAdm";
+import PlaceView from "./supervisor/PlaceOfSelection";
 export{
     SuperDashboard,
     UserDashboard,
@@ -26,6 +27,7 @@ export{
     Dashboard,
     PlaceSelection,
     PlaceSupervisor,
-    StudentAdm
+    StudentAdm,
+    PlaceView
 
 }

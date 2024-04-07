@@ -17,7 +17,7 @@ import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
 import { udom_logo } from '../../assets';
 
-const PlaceOfSlection = () => {
+const PlaceView = () => {
     const [project, setProject] = useState([]);
     const [filters, setFilters] = useState(null);
     const [selected, setSelected] = useState(null);
@@ -299,4 +299,4 @@ const PlaceOfSlection = () => {
     )
 }
 
-export default PlaceOfSlection
+export default PlaceView

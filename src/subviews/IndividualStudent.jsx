@@ -1,9 +1,9 @@
 
 import React, { useEffect, useRef, useState } from 'react'
-import { BarTop, Sidebar, Topbar } from '../../components'
+import { BarTop, Sidebar, Topbar } from '../components'
 import { useParams } from 'react-router-dom'
 import axios from 'axios';
-import { baseURL } from '../../paths/base_url';
+import { baseURL } from '../paths/base_url';
 import toast from 'react-hot-toast';
 
 
