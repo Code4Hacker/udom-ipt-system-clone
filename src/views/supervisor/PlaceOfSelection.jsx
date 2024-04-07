@@ -133,20 +133,18 @@ const PlaceView = () => {
     const cols = [
         { field: 'sn', header: '#' },
         { field: 'name', header: 'Place Name' },
-        { field: 'category', header: 'Category' },
-        { field: 'domain', header: 'Capacity' },
         { field: 'description', header: 'Branch' },
         { field: 'supervisor', header: 'Area' },
         { field: 'remarks', header: 'Region' },
-        { field: 'students', header: 'District' }
+        { field: 'email', header: 'District' }
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
     const getModulesDetails = async () => {
         try {
             const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}place_selection.php`
+                method: "GET",
+                url: `${baseURL}place_selection.php?supervisor=${window.localStorage.super?window.localStorage.super:"UNDIFINED"}`
             }); setProject((await requests).data);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
