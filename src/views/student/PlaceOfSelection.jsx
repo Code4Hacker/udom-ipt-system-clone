@@ -145,7 +145,7 @@ const PlaceOfSlection = () => {
     const getModulesDetails = async () => {
         try {
             const requests = axios.request({
-                method: "POST",
+                method: "GET",
                 url: `${baseURL}place_selection.php`
             }); setProject((await requests).data);
         } catch (error) {

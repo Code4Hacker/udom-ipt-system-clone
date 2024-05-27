@@ -5,7 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
-import { FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg } from 'react-bootstrap-icons';
+import { ChatDots, ChatDotsFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg } from 'react-bootstrap-icons';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import toast, { Toaster } from 'react-hot-toast';
@@ -24,46 +24,74 @@ const PlaceView = () => {
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [visible, setVisible] = useState(false);
     const storage = window.localStorage;
-    const handleSubmitSelection = async (event, id) => {
-        let forma = (new FormData());
-        forma.append("studentId", storage.getItem("std_usr"));
-        let bodydata = forma;
+    const handleSubmitSelection = async (event, id, name) => {
         try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}con_std.php`,
-                data: bodydata
-            });
-            const { academic, about, selection } = (await requests).data[0];
 
-            if (selection.length > 0) {
-                toast.error("Sorry, we see that your selection board is not empty... You can't add more!");
-
-            } else {
-                let newData = (new FormData());
-                newData.append("student", storage.getItem("std_usr"));
-                newData.append("selection", event.data.sn);
-                
-
-                let bodydata = newData;
-                try {
-                    const requests = axios.request({
-                        method: "POST",
-                        url: `${baseURL}add_select.php`,
-                        data: bodydata
-                    });
-                    console.log((await requests).data);
-                    if((await requests).data.status === 200) {
-                      toast.dismiss(id.id);
-                      toast.success("Selection Success");
-                      setTimeout(() => {
-                        toast.dismiss();
-                      }, 3000);
-                    }else{toast.error("Something went wrong, try again!");}
-                } catch (error) {
-                    toast.error(`Something went wrong\n${error}`);
-                }
+            let headersList = {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+                "Content-Type": "application/json",
+                "Authorization": "Basic Yjc1N2NiYmZmZDgwMWM1MzpNemM0TWpWalpUVXdNalZqWldVeFl6RmpPRGcwTWpsbU5ESTJNbUl4TW1ObFpEQXlPRFV5WTJFeE9XTTNOek0wTURnM1l6TXpaR0ZtWVRRd1kyVTNNZz09"
             }
+
+            let bodyContent = JSON.stringify({
+                "source_addr": "INFO",
+                "schedule_time": "",
+                "encoding": "0",
+                "message": `Attention!, We're Reminding you  (${(name).toUpperCase()}) to submit student Assesments at https://geminichild.netlify.app token key 540344. Thank you`,
+                "recipients": [
+                    {
+                        "recipient_id": 1,
+                        "dest_addr": id
+                    }
+                ]
+            });
+
+            let reqOptions = {
+                url: "https://apisms.beem.africa/v1/send",
+                method: "POST",
+                headers: headersList,
+                data: bodyContent,
+            }
+            let response = await axios.request(reqOptions);
+            console.log(response.data.code);
+            if(response.data.code === 100){
+                toast.remove()
+                toast.success(response.data.message);
+            }else{
+                toast.remove()
+                toast.error(response.data.message+"\nTry again!, ")
+            }
+            // const { academic, about, selection } = (await requests).data[0];
+
+            // if (selection.length > 0) {
+            //     toast.error("Sorry, we see that your selection board is not empty... You can't add more!");
+
+            // } else {
+            //     let newData = (new FormData());
+            //     newData.append("student", storage.getItem("std_usr"));
+            //     newData.append("selection", event.data.sn);
+
+
+            //     let bodydata = newData;
+            //     try {
+            //         const requests = axios.request({
+            //             method: "POST",
+            //             url: `${baseURL}add_select.php`,
+            //             data: bodydata
+            //         });
+            //         console.log((await requests).data);
+            //         if ((await requests).data.status === 200) {
+            //             toast.dismiss(id.id);
+            //             toast.success("Selection Success");
+            //             setTimeout(() => {
+            //                 toast.dismiss();
+            //             }, 3000);
+            //         } else { toast.error("Something went wrong, try again!"); }
+            //     } catch (error) {
+            //         toast.error(`Something went wrong\n${error}`);
+            //     }
+            // }
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
@@ -88,11 +116,11 @@ const PlaceView = () => {
                                 {storage.getItem("u_name") ? storage.getItem("u_name") : "Paulo Michael"}
                             </p>
                             <p className="mt-1 text-sm text-gray-500">
-                                Are you Sure! Do you  wan't to select
+                                After Click send you will alert
                                 <div className="">
-                                    Name: <span className=" text-indigo-500">{event.data.name}</span>, Category: <span className=" text-indigo-500">{event.data.category}</span> at
+                                    Contact: <span className=" text-indigo-500">{event.data.contact}</span> from  <span className=" text-indigo-500">{event.data.name}</span> at
                                     <br />
-                                    <span className=" ">{event.data.region}</span>  <span className=" ">[{event.data.supervisor}]</span>
+                                    <span className=" ">{event.data.region}</span>  <span className=" ">[{event.data.supervisor}] to Send student assements</span>
 
                                 </div>
                             </p>
@@ -101,10 +129,10 @@ const PlaceView = () => {
                 </div>
                 <div className="flex border-l border-gray-200">
                     <button
-                        onClick={() => handleSubmitSelection(event, t)}
+                        onClick={() => handleSubmitSelection(event, event.data.contact,event.data.name)}
                         className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
-                        Accept
+                        Send It
                     </button>
                 </div>
             </div>
@@ -136,7 +164,7 @@ const PlaceView = () => {
         { field: 'description', header: 'Branch' },
         { field: 'supervisor', header: 'Area' },
         { field: 'remarks', header: 'Region' },
-        { field: 'email', header: 'District' }
+        { field: 'contact', header: 'Contact' }
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
@@ -144,7 +172,7 @@ const PlaceView = () => {
         try {
             const requests = axios.request({
                 method: "GET",
-                url: `${baseURL}place_selection.php?supervisor=${window.localStorage.super?window.localStorage.super:"UNDIFINED"}`
+                url: `${baseURL}place_selection.php?supervisor=${window.localStorage.super ? window.localStorage.super : "UNDIFINED"}`
             }); setProject((await requests).data);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
@@ -233,14 +261,65 @@ const PlaceView = () => {
         setGlobalFilterValue('');
     };
 
+    const handleSentSessions = async () => {
+        let arra = new Array();
+        let obj = new Object();
+
+        for (let i = 0; i < project.length; i++) {
+            const element = project[i].contact;
+
+            obj = {
+                "recipient_id": (i+1),
+                "dest_addr": element
+            }
+            arra.push(obj);
+            
+        }
+        try {
+
+            let headersList = {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+                "Content-Type": "application/json",
+                "Authorization": "Basic Yjc1N2NiYmZmZDgwMWM1MzpNemM0TWpWalpUVXdNalZqWldVeFl6RmpPRGcwTWpsbU5ESTJNbUl4TW1ObFpEQXlPRFV5WTJFeE9XTTNOek0wTURnM1l6TXpaR0ZtWVRRd1kyVTNNZz09"
+            }
+
+            let bodyContent = JSON.stringify({
+                "source_addr": "INFO",
+                "schedule_time": "",
+                "encoding": "0",
+                "message": `Attention!, We're Reminding you to submit student Assesments at https://geminichild.netlify.app token key 540344. Thank you`,
+                "recipients": arra
+            });
+            console.log(arra);
+
+            let reqOptions = {
+                url: "https://apisms.beem.africa/v1/send",
+                method: "POST",
+                headers: headersList,
+                data: bodyContent,
+            }
+            let response = await axios.request(reqOptions);
+            console.log(response.data.code);
+            if(response.data.code === 100){
+                toast.remove()
+                toast.success(response.data.message);
+            }else{
+                toast.remove()
+                toast.error(response.data.message+"\nTry again!, ")
+            }
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
+        }
+    }
     const header = (
         <div className="">
             <div className="flex justify-content-between">
 
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
-                {/* <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
+                <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={handleSentSessions} style={{
                     backgroundColor: 'var(--ocean)', height: '45px'
-                }}><Plus /> Add Student Project</Button> */}
+                }}><ChatDotsFill /> Sent Submittion Notification</Button>
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -252,6 +331,7 @@ const PlaceView = () => {
 
         </div>
     );
+
     return (
         <div className='view user_board studentprojects'>
             <Toaster ref={toast} position='top-right' color='white' />

@@ -298,6 +298,7 @@ const PlaceSelection = () => {
     const [area, setArea] = useState("");
     const [region, setRegion] = useState("");
     const [district, setDistrict] = useState("");
+    const [contact, setContact] = useState("");
 
     const handleSubmit = async () => {
         console.log(selectedSupervisor, selectedDomain);
@@ -310,6 +311,7 @@ const PlaceSelection = () => {
             formdata.append("area", area);
             formdata.append("region", region);
             formdata.append("district", district);
+            formdata.append("contact", contact);
             if(selectedSupervisor !== null){
                 formdata.append("supervisor",selectedSupervisor.super);
             }
@@ -418,6 +420,13 @@ const PlaceSelection = () => {
                             }} dropdown />
                         </div>
                     </div>
+                    <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">PHONE NUMBER <span>*</span></h4>
+                            </div>
+                            <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+
+                        </div>
                     <div className="button text-center">
                         <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                             backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
