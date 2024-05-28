@@ -259,9 +259,6 @@ const PlaceView = () => {
         setGlobalFilterValue('');
     };
     const handleSentSessions = async () => {
-        let arra = new Array();
-        let obj = new Object();
-        let array_token = new Array();
         for (let i = 0; i < project.length; i++) {
             const element = project[i].contact;
             let random = Math.floor((Math.random() * 10_000) + 1);
