@@ -49,8 +49,6 @@ const BarTop = ({ username, menu, extras }) => {
                 const bodydata = formdata;
 
                 
-
-
                 const dataform = {
                     method: "POST",
                     url: `${baseURL}update_password.php`,

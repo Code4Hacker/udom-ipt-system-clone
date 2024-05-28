@@ -55,12 +55,12 @@ const PlaceView = () => {
             }
             let response = await axios.request(reqOptions);
             console.log(response.data.code);
-            if(response.data.code === 100){
+            if (response.data.code === 100) {
                 toast.remove()
                 toast.success(response.data.message);
-            }else{
+            } else {
                 toast.remove()
-                toast.error(response.data.message+"\nTry again!, ")
+                toast.error(response.data.message + "\nTry again!, ")
             }
             // const { academic, about, selection } = (await requests).data[0];
 
@@ -129,7 +129,7 @@ const PlaceView = () => {
                 </div>
                 <div className="flex border-l border-gray-200">
                     <button
-                        onClick={() => handleSubmitSelection(event, event.data.contact,event.data.name)}
+                        onClick={() => handleSubmitSelection(event, event.data.contact, event.data.name)}
                         className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                         Send It
@@ -260,57 +260,97 @@ const PlaceView = () => {
         });
         setGlobalFilterValue('');
     };
+    const handleTwillio = async () => {
+        const accountSid = 'AC09e824342c3078987f24c223eb5c7d4f';
+        const authToken = 'f94ce6e51eb19200d7c04fef4884f434';  // Replace with your actual auth token
 
-    const handleSentSessions = async () => {
+        const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+        const headers = {
+            'Authorization': 'Basic ' + btoa(`${accountSid}:${authToken}`),
+            'Content-Type': 'application/x-www-form-urlencoded',
+        };
         let arra = new Array();
         let obj = new Object();
+        let array_token = new Array();
 
         for (let i = 0; i < project.length; i++) {
             const element = project[i].contact;
-
-            obj = {
-                "recipient_id": (i+1),
-                "dest_addr": element
+            let random = Math.floor((Math.random() * 10_000) + 1);
+            const data = new URLSearchParams({
+                Body: `Attention!, We're Reminding you to submit student Assesments at https://geminichild.netlify.app token key ${random}. Thank you`,
+                From: '+17626002978',  // Your Twilio phone number
+                To: `+${element}`,   // Recipient's phone number
+            });
+            console.log(random)
+            try {
+                const response = await axios.post(url, data, { headers });
+                console.log('Message sent:', response.data);
+            } catch (error) {
+                console.error('Error sending message:', error);
             }
             arra.push(obj);
-            
+
         }
-        try {
 
-            let headersList = {
-                "Accept": "*/*",
-                "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-                "Content-Type": "application/json",
-                "Authorization": "Basic Yjc1N2NiYmZmZDgwMWM1MzpNemM0TWpWalpUVXdNalZqWldVeFl6RmpPRGcwTWpsbU5ESTJNbUl4TW1ObFpEQXlPRFV5WTJFeE9XTTNOek0wTURnM1l6TXpaR0ZtWVRRd1kyVTNNZz09"
-            }
+    }
+    const handleSentSessions = async () => {
+        let arra = new Array();
+        let obj = new Object();
+        let array_token = new Array();
+        for (let i = 0; i < project.length; i++) {
+            const element = project[i].contact;
+            let random = Math.floor((Math.random() * 10_000) + 1);
 
-            let bodyContent = JSON.stringify({
-                "source_addr": "INFO",
-                "schedule_time": "",
-                "encoding": "0",
-                "message": `Attention!, We're Reminding you to submit student Assesments at https://geminichild.netlify.app token key 540344. Thank you`,
-                "recipients": arra
-            });
-            console.log(arra);
+            try {
 
-            let reqOptions = {
-                url: "https://apisms.beem.africa/v1/send",
-                method: "POST",
-                headers: headersList,
-                data: bodyContent,
+                let headersList = {
+                    "Content-Type": "application/json",
+                    "Authorization": "Basic Yjc1N2NiYmZmZDgwMWM1MzpNemM0TWpWalpUVXdNalZqWldVeFl6RmpPRGcwTWpsbU5ESTJNbUl4TW1ObFpEQXlPRFV5WTJFeE9XTTNOek0wTURnM1l6TXpaR0ZtWVRRd1kyVTNNZz09"
+                }
+
+                let bodyContent = JSON.stringify({
+                    "source_addr": "INFO",
+                    "schedule_time": "",
+                    "encoding": "0",
+                    "message": `Attention!, We're Reminding you to submit student Assesments at https://geminichild.netlify.app token key ${random}. Thank you`,
+                    "recipients": [{
+                        "recipient_id": (i + 1),
+                        "dest_addr": element
+                    }]
+                });
+
+                let reqOptions = {
+                    url: "https://apisms.beem.africa/v1/send",
+                    method: "POST",
+                    headers: headersList,
+                    data: bodyContent,
+                }
+                let response = await axios.request(reqOptions);
+                console.log(response.data.code);
+                if (response.data.code === 100) {
+                    toast.remove()
+                    toast.success(response.data.message);
+                    let formdata = new FormData();
+
+                    formdata.append("tokeNumber", random);
+
+                    const bodydata = formdata;
+                    const send_to_db = await axios.request({
+                        method:"POST",
+                        url:`${baseURL}token_auth.php`,
+                        data: bodydata
+                    });
+                    console.log(send_to_db.data);
+                    console.log(random);
+                } else {
+                    toast.remove()
+                    toast.error(response.data.message + "\nTry again!, ")
+                }
+            } catch (error) {
+                toast.error(`Something went wrong\n${error}`);
             }
-            let response = await axios.request(reqOptions);
-            console.log(response.data.code);
-            if(response.data.code === 100){
-                toast.remove()
-                toast.success(response.data.message);
-            }else{
-                toast.remove()
-                toast.error(response.data.message+"\nTry again!, ")
-            }
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
         }
+
     }
     const header = (
         <div className="">
