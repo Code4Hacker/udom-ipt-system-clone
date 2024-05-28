@@ -28,10 +28,8 @@ const PlaceView = () => {
         try {
 
             let headersList = {
-                "Accept": "*/*",
-                "User-Agent": "Thunder Client (https://www.thunderclient.com)",
                 "Content-Type": "application/json",
-                "Authorization": "Basic Yjc1N2NiYmZmZDgwMWM1MzpNemM0TWpWalpUVXdNalZqWldVeFl6RmpPRGcwTWpsbU5ESTJNbUl4TW1ObFpEQXlPRFV5WTJFeE9XTTNOek0wTURnM1l6TXpaR0ZtWVRRd1kyVTNNZz09"
+                "Authorization": `Basic ${import.meta.env.VITE_AUTH}`
             }
 
             let bodyContent = JSON.stringify({
