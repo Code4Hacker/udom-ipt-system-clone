@@ -260,39 +260,6 @@ const PlaceView = () => {
         });
         setGlobalFilterValue('');
     };
-    // const handleTwillio = async () => {
-    //     const accountSid = 'AC09e824342c3078987f24c223eb5c7d4f';
-    //     const authToken = 'f94ce6e51eb19200d7c04fef4884f434';  // Replace with your actual auth token
-
-    //     const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-    //     const headers = {
-    //         'Authorization': 'Basic ' + btoa(`${accountSid}:${authToken}`),
-    //         'Content-Type': 'application/x-www-form-urlencoded',
-    //     };
-    //     let arra = new Array();
-    //     let obj = new Object();
-    //     let array_token = new Array();
-
-    //     for (let i = 0; i < project.length; i++) {
-    //         const element = project[i].contact;
-    //         let random = Math.floor((Math.random() * 10_000) + 1);
-    //         const data = new URLSearchParams({
-    //             Body: `Attention!, We're Reminding you to submit student Assesments at https://geminichild.netlify.app token key ${random}. Thank you`,
-    //             From: '+17626002978',  // Your Twilio phone number
-    //             To: `+${element}`,   // Recipient's phone number
-    //         });
-    //         console.log(random)
-    //         try {
-    //             const response = await axios.post(url, data, { headers });
-    //             console.log('Message sent:', response.data);
-    //         } catch (error) {
-    //             console.error('Error sending message:', error);
-    //         }
-    //         arra.push(obj);
-
-    //     }
-
-    // }
     const handleSentSessions = async () => {
         let arra = new Array();
         let obj = new Object();
