@@ -13,6 +13,8 @@ import PlaceSelection from "./admin/PlaceSelection";
 import PlaceSupervisor from "./admin/PlaceSupervisor";
 import StudentAdm from "./admin/StudentAdm";
 import PlaceView from "./supervisor/PlaceOfSelection";
+import AuthToken from "./token_auth/AuthToken";
+import AfterVerify from "./token_auth/AfterSuccess";
 export{
     SuperDashboard,
     UserDashboard,
@@ -28,6 +30,9 @@ export{
     PlaceSelection,
     PlaceSupervisor,
     StudentAdm,
-    PlaceView
+    PlaceView, 
+    AuthToken, 
+    AfterVerify
+
 
 }

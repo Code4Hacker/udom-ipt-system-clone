@@ -6,6 +6,7 @@
 @use './scss_styles/module_selection';
 @use './scss_styles/studentproject';
 @use './scss_styles/font_setup';
+@use './scss_styles/auth_token';
 
 :root {
     --light: rgb(255, 255, 255);
@@ -23,6 +24,8 @@
     --meal-3: #ebebeb;
     --alice: rgba(217, 227, 235, 0.466);
     --green: rgb(0, 164, 126);
+    --green-slim: rgb(202, 255, 243);
+    --dodge-slim: rgb(184, 219, 253);
 }
 
 @media(prefers-color-scheme: dark) {

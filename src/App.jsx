@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { ArrivalNote, Dashboard, IndividualStudent, Module, PlaceOfSlection, PlaceSelection, PlaceSupervisor, PlaceView, Registration, StudentAdm, StudentProjects, SuperDashboard, Testing, UserDashboard } from './views'
+import { AfterVerify, ArrivalNote, AuthToken, Dashboard, IndividualStudent, Module, PlaceOfSlection, PlaceSelection, PlaceSupervisor, PlaceView, Registration, StudentAdm, StudentProjects, SuperDashboard, Testing, UserDashboard } from './views'
 import { PrimeReactProvider } from 'primereact/api'
 import { Toaster } from 'react-hot-toast'
 import { LogBook } from './views'
@@ -26,6 +26,8 @@ const App = () => {
           <Route path='/selection_place/:id' element={<PlaceSupervisor />} />
           <Route path='/admin_students' element={<StudentAdm/>} />
           <Route path='/places' element={<PlaceView />} />
+          <Route path='/auth_token' element={<AuthToken />} />
+          <Route path='/after_verify' element={<AfterVerify />} />
 
         </Routes>
       </BrowserRouter>
