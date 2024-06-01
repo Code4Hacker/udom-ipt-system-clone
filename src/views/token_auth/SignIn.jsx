@@ -22,14 +22,17 @@ const SSignIn = () => {
             const bodydata = formdata;
             const request = axios.request({
                 method: 'POST',
-                url: `${baseURL}externals_.php`,
+                url: `${baseURL}externals_login.php`,
                 data: bodydata
             });
             console.log((await request).data);
             if ((await request).data.status === 200) {
-                toast.success('Registered Successiful!')
+                toast.loading('login Successiful!')
                 window.localStorage.setItem("sv_token", (await request).data.token);
-                localStorage.removeItem("sv_token");
+                setTimeout(() => {
+                    toast.remove();
+                    nav('/upload_assesments');
+                }, 2000);
             } else {toast.error((await request).data.message);}
         } else {toast.error("Fill all fields !!!");}
     }
