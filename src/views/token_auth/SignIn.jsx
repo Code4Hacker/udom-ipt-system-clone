@@ -4,13 +4,11 @@ import toast from 'react-hot-toast';
 import { baseURL } from '../../paths/base_url';
 import { useNavigate } from 'react-router-dom';
 
-const AfterVerify = () => {
+const SSignIn = () => {
     const nav = useNavigate();
     useEffect(() => {
-        if (window.localStorage.v_token !== undefined) {
-            console.log(localStorage.v_token);
-        } else {
-            nav('/auth_token');
+        if (window.localStorage.sv_token !== undefined) {
+            nav('/upload_assesments')
         }
     }, []);
     const [username, setUsername] = useState("");
@@ -29,12 +27,9 @@ const AfterVerify = () => {
             });
             console.log((await request).data);
             if ((await request).data.status === 200) {
-                toast.success('Registered Successiful, Redirecting to sign In ...!')
-                localStorage.removeItem("v_token");
-                setTimeout(() => {
-                    toast.remove();
-                    nav('/ss_sign_in');
-                }, 2000);
+                toast.success('Registered Successiful!')
+                window.localStorage.setItem("sv_token", (await request).data.token);
+                localStorage.removeItem("sv_token");
             } else {toast.error((await request).data.message);}
         } else {toast.error("Fill all fields !!!");}
     }
@@ -43,19 +38,16 @@ const AfterVerify = () => {
             <div className="">
                 <h1 className='text-center text-lg text-bold' style={{
                     fontWeight: '900'
-                }}>ATTENTION FIRST</h1>
-                <p className='text-center ml-5 mr-5'>Please change your credential for security reasons. <b>Important</b></p>
+                }}>SIGN <span className="text-blue">IN</span></h1>
                 <br />
-                <input type="text" placeholder='Enter New Username' value={username} onChange={(e) => setUsername(e.target.value)} />
+                <input type="text" placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
                 <br />
-                <input type="password" placeholder='Enter New Password' value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input type="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
                 <div className="message"></div>
-                <button onClick={handleSubmittion}>Verify</button>
+                <button onClick={handleSubmittion}>Login</button>
             </div>
         </div>
     )
 }
 
-export default AfterVerify
-
-
+export default SSignIn

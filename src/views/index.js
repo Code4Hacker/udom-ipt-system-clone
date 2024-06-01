@@ -15,6 +15,8 @@ import StudentAdm from "./admin/StudentAdm";
 import PlaceView from "./supervisor/PlaceOfSelection";
 import AuthToken from "./token_auth/AuthToken";
 import AfterVerify from "./token_auth/AfterSuccess";
+import USAssesments from "./forms/UploadStudentAssesments";
+import SSignIn from "./token_auth/SignIn";
 export{
     SuperDashboard,
     UserDashboard,
@@ -32,7 +34,7 @@ export{
     StudentAdm,
     PlaceView, 
     AuthToken, 
-    AfterVerify
-
-
+    AfterVerify,
+    USAssesments,
+    SSignIn
 }

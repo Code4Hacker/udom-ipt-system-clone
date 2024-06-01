@@ -4,11 +4,11 @@ import toast from 'react-hot-toast';
 import { baseURL } from '../../paths/base_url';
 import { useNavigate } from 'react-router-dom';
 
-const AfterVerify = () => {
+const USAssesments = () => {
     const nav = useNavigate();
     useEffect(() => {
-        if (window.localStorage.v_token !== undefined) {
-            console.log(localStorage.v_token);
+        if (window.localStorage.sv_token !== undefined) {
+            console.log(localStorage.sv_token);
         } else {
             nav('/auth_token');
         }
@@ -29,12 +29,9 @@ const AfterVerify = () => {
             });
             console.log((await request).data);
             if ((await request).data.status === 200) {
-                toast.success('Registered Successiful, Redirecting to sign In ...!')
+                toast.success('Registered Successiful!')
+                window.localStorage.setItem("v_token", (await request).data.token);
                 localStorage.removeItem("v_token");
-                setTimeout(() => {
-                    toast.remove();
-                    nav('/ss_sign_in');
-                }, 2000);
             } else {toast.error((await request).data.message);}
         } else {toast.error("Fill all fields !!!");}
     }
@@ -56,6 +53,6 @@ const AfterVerify = () => {
     )
 }
 
-export default AfterVerify
+export default USAssesments
 
 
