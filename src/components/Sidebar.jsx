@@ -45,19 +45,28 @@ const Sidebar = () => {
                     "url": "/places",
                     "icon": <GeoAltFill />,
                     "title": "Assigned Places"
-                },] :
+                },
+            ] :
                 [{
-                    "url": "/admin_dashboard",
+                    "url": "/dashboard",
                     "icon": <JournalBookmarkFill />,
-                    "title": "Supervisors"
+                    "title": "Departments"
                 }, {
-                    "url": "/selection_place",
+                    "url": "/courses",
                     "icon": <MapFill />,
-                    "title": "Place of Selections"
+                    "title": "Courses"
                 }, {
-                    "url": "/admin_students",
+                    "url": "/subjects",
+                    "icon": <PeopleFill />,
+                    "title": "Registered Subjects"
+                },{
+                    "url": "/students",
                     "icon": <PeopleFill />,
                     "title": "Students"
+                },{
+                    "url": "/dashboard",
+                    "icon": <PeopleFill />,
+                    "title": "Enroll Student"
                 },
                 ]
 

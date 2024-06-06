@@ -56,7 +56,7 @@ const Topbar = ({ headline, subheadline, note}) => {
               <h4 className='page-title'>{headline} <span>{note}</span></h4>
             </div>
             <div className="flex">
-               <span><Link className='link' to={''}>UDOM IPT/TP</Link><span>/{subheadline}</span></span>
+               <span><Link className='link' to={''}>School Administration SYS </Link><span>/{subheadline}</span></span>
             </div>
           </div>
         </Row>

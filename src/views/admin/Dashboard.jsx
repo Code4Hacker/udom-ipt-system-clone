@@ -5,20 +5,19 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
-import { CloudArrowUpFill, CloudPlusFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg } from 'react-bootstrap-icons';
+import { EyeFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, PenFill, Plus, PlusCircle, Trash3Fill } from 'react-bootstrap-icons';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import toast, { Toaster } from 'react-hot-toast';
 import jQuery from 'jquery';
 import studentRaws from "../../raws/studentprojects.json";
 import { Dialog } from 'primereact/dialog';
-import { Divider } from 'primereact/divider';
 import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
-import { AutoComplete } from 'primereact/autocomplete';
-import { Chips } from "primereact/chips";
-import { useNavigate } from 'react-router-dom';
 import { udom_logo } from '../../assets';
+import { useNavigate } from 'react-router';
+import { AutoComplete } from 'primereact/autocomplete';
+
 
 const Dashboard = () => {
     const [project, setProject] = useState([]);
@@ -26,7 +25,69 @@ const Dashboard = () => {
     const [selected, setSelected] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [visible, setVisible] = useState(false);
+    const [sltction, setSlction] = useState(false);
+    const [updating, setUpdating] = useState(false);
+    const [selectedDomain, setselectedDomain] = useState(null);
+    const [parameters, setParameters] = useState();
+
+    const [Domains, setDomains] = useState([]);
+    const [filteredDomains, setFilteredDomains] = useState(null);
     const storage = window.localStorage;
+
+    const [Supervisors, setSupervisors] = useState([]);
+    const [selectedSupervisor, setSelectedSupervisor] = useState(null);
+    const [filteredSupervisors, setFilteredSupervisors] = useState(null);
+
+    const search3 = (event) => {
+
+        setTimeout(() => {
+            let _filteredSupervisors;
+
+            if (!event.query.trim().length) {
+                _filteredSupervisors = [...Supervisors];
+            }
+            else {
+                _filteredSupervisors = Supervisors.filter((Supervisor) => {
+                    console.log("filtered", _filteredSupervisors)
+                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
+                });
+            }
+
+            setFilteredSupervisors(_filteredSupervisors);
+        }, 250);
+    }
+    const search2 = (event) => {
+
+        setTimeout(() => {
+            let _filteredDomains;
+
+            if (!event.query.trim().length) {
+                _filteredDomains = [...Domains];
+            }
+            else {
+                _filteredDomains = Domains.filter((Supervisor) => {
+                    // console.log("filtered", _filteredDomains)
+                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
+                });
+            }
+
+            setFilteredDomains(_filteredDomains);
+        }, 250);
+    }
+    const getModulesSuper = async () => {
+        try {
+            const requests = axios.request({
+                method: "POST",
+                url: `${baseURL}supervisor.php`
+            });
+            setSupervisors((await requests).data);
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
+        }
+    }
+    const superchange = (e) => {
+        setSelectedSupervisor(e.value);
+    }
     const handleSubmitSelection = async (event, id) => {
         let forma = (new FormData());
         forma.append("studentId", storage.getItem("std_usr"));
@@ -55,7 +116,7 @@ const Dashboard = () => {
                         url: `${baseURL}add_select.php`,
                         data: bodydata
                     });
-                    // console.log((await requests).data);
+                    console.log((await requests).data);
                     if ((await requests).data.status === 200) {
                         toast.dismiss(id.id);
                         toast.success("Selection Success");
@@ -71,53 +132,17 @@ const Dashboard = () => {
             toast.error(`Something went wrong\n${error}`);
         }
     }
+    const navigate = useNavigate();
     const onRowSelect = (event) => {
-        toast.custom((t) => (
-            <div
-                className={`${t.visible ? 'animate-enter' : 'animate-leave'
-                    } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-            >
-                <div className="flex-1 w-0 p-4">
-                    <div className="flex items-start">
-                        <div className="flex-shrink-0 pt-0.5">
-                            <img
-                                className="h-10 w-10 rounded-full"
-                                src={udom_logo}
-                                alt=""
-                            />
-                        </div>
-                        <div className="ml-3 flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                                {storage.getItem("u_name") ? storage.getItem("u_name") : "Paulo Michael"}
-                            </p>
-                            <p className="mt-1 text-sm text-gray-500">
-                                Are you Sure! Do you  wan't to select
-                                <div className="">
-                                    Name: <span className=" text-indigo-500">{event.data.name}</span>, Category: <span className=" text-indigo-500">{event.data.category}</span> at
-                                    <br />
-                                    <span className=" ">{event.data.region}</span>  <span className=" ">[{event.data.supervisor}]</span>
-
-                                </div>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex border-l border-gray-200">
-                    <button
-                        onClick={() => handleSubmitSelection(event, t)}
-                        className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                        Accept
-                    </button>
-                </div>
-            </div>
-        ), { duration: 10000 })
         jQuery("td").css({
             "background-color": 'var(--light)'
         })
         jQuery(event.originalEvent.target).css({
             "background-color": 'var(--alice)'
         })
+        // navigate(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        setParameters(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        setSlction(!false);
 
     };
 
@@ -131,35 +156,33 @@ const Dashboard = () => {
         })
 
     };
+    const viewSubjects = () => {
+        setSlction(false);
+        navigate(parameters);
+
+    }
     const dt = useRef(null);
 
     const cols = [
         { field: 'sn', header: '#' },
-        { field: 'name', header: 'Supervisor Name' },
-        { field: 'department', header: 'Department' },
-        { field: 'super_id', header: 'Supervisor ID' },
-        { field: 'mobile', header: 'Mobile' },
-        { field: 'location', header: 'Location' }
+        { field: 'name', header: 'Department Name' },
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
     const getModulesDetails = async () => {
-        let formadata = new FormData();
-        formadata.append("studentId", window.localStorage.getItem("std_usr") ? window.localStorage.getItem("std_usr") : "");
-        const bodydata = formadata;
         try {
             const requests = axios.request({
                 method: "POST",
-                url: `${baseURL}supervisors.php`,
-                data: bodydata
+                url: `${baseURL}adm_place.php`
             }); setProject((await requests).data);
-            // console.log((await requests).data);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
     }
     useEffect(() => {
         getModulesDetails();
+        getModulesDomain();
+        getModulesSuper();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -240,49 +263,7 @@ const Dashboard = () => {
         });
         setGlobalFilterValue('');
     };
-    const [firstname, setFirstname] = useState("");
-    const [mname, setMname] = useState("");
-    const [lname, setLname] = useState("");
-    const [dname, setDname] = useState("");
-    const [super_id, setSuper_id] = useState("");
-    const [mobile, setMobile] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [location, setLocation] = useState("");
 
-    const handleSubmit = async () => {
-        if (firstname !== "" && mname !== "" && lname !== "" && dname !== "" && super_id !== "" && mobile !== "" && password !== "" && location !== "") {
-            let formdata = new FormData();
-            formdata.append("f_name", firstname);
-            formdata.append("m_name", mname);
-            formdata.append("l_name", lname);
-            formdata.append("department", dname);
-            formdata.append("super_id", super_id);
-            formdata.append("mobile", mobile);
-            formdata.append("e_mail", email);
-            formdata.append("password", password);
-            formdata.append("location", location);
-            formdata.append("role", "supervisor");
-
-            const bodydata = formdata;
-
-            try {
-                const requests = axios.request({
-                    url: `${baseURL}add_supervisor.php`,
-                    method: "POST",
-                    data: bodydata
-                });
-                if((await requests).data.status === 200){
-                    toast.success("Supervisor Added Successiful!");
-                    getModulesDetails();
-                }else toast.error("something wen't wrong. Try  again !")
-            } catch (error) {
-
-            }
-        } else {
-            toast.error("All field must field except email is Optional!");
-        }
-    }
     const header = (
         <div className="">
             <div className="flex justify-content-between">
@@ -290,7 +271,7 @@ const Dashboard = () => {
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
                 <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
                     backgroundColor: 'var(--ocean)', height: '45px'
-                }}><CloudPlusFill />Add New Supervisor</Button>
+                }}><Plus /> Add Department</Button>
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -302,8 +283,70 @@ const Dashboard = () => {
 
         </div>
     );
+    const getModulesDomain = async () => {
+        try {
+            const requests = axios.request({
+                method: "POST",
+                url: `${baseURL}domains.php`
+            });
+            setDomains((await requests).data);
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
+        }
+    }
+    // inputs states
+
+    const [place_name, setPlace_name] = useState("");
+    const [capacity, setCapacity] = useState("");
+    const [branch, setBranch] = useState("");
+    const [area, setArea] = useState("");
+    const [region, setRegion] = useState("");
+    const [district, setDistrict] = useState("");
+    const [contact, setContact] = useState("");
+
+    const handleSubmit = async () => {
+        console.log(selectedSupervisor, selectedDomain);
+        if (place_name !== "" && capacity !== "" && branch !== "" && area !== "" && region !== "" && district !== "" && selectedDomain !== null) {
+            let formdata = new FormData();
+            formdata.append("place_name", place_name);
+            formdata.append("category", selectedDomain.name);
+            formdata.append("capacity", capacity);
+            formdata.append("branch", branch);
+            formdata.append("area", area);
+            formdata.append("region", region);
+            formdata.append("district", district);
+            formdata.append("contact", contact);
+            if (selectedSupervisor !== null) {
+                formdata.append("supervisor", selectedSupervisor.super);
+            }
+            const bodydata = formdata;
+
+            try {
+                const request = axios.request({
+                    url: `${baseURL}add_place.php`,
+                    method: "POST",
+                    data: bodydata
+                });
+                if ((await request).data.status === 200) {
+                    toast.success("Place Added Successiful!");
+                    setVisible(false);
+                    getModulesDetails();
+                    setPlace_name(""); setBranch(""); setCapacity(); setArea(""); setDistrict(""); setRegion("");
+                } else {
+                    toast.error("Something went wrong!");
+                }
+            } catch (error) {
+
+            }
+
+        } else {
+            toast.error("All field Required to be filled!");
+        }
+    }
     return (
-        <div className='view user_board'>
+        <div className='view user_board studentprojects'>
+            <Toaster ref={toast} position='top-right' color='white' />
+            {/* creating */}
             <div className="dark_overlay" style={{
                 display: `${!visible ? 'none' : 'block'}`
             }}>
@@ -312,114 +355,124 @@ const Dashboard = () => {
                         borderBottom: '1.5px solid var(--shadow_color)',
                         paddingBottom: '10px'
                     }}>
-                        Add Supervisor
+                        CREATE DEPARTMENT
                     </h3>
-                    <div className="flex_2">
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Supervisor Firstname <span>*</span></h4>
-                            </div>
-                            <input type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)}/>
-
-                        </div>
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Middle Name <span>*</span></h4>
-                            </div>
-                            <input type="text" value={mname} onChange={(e) => setMname(e.target.value)}/>
-                        </div>
-                    </div>
                     <div className="input m-1">
                         <div className="span">
-                            <h4 className="text-muted page-title">Supervisor Last Name <span>*</span></h4>
+                            <h4 className="text-muted page-title">Department Name <span>*</span></h4>
                         </div>
-                        <input type="text" value={lname} onChange={(e) => setLname(e.target.value)}/>
+                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+
                     </div>
+                    <div className="button text-center">
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
+                        }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
+                    </div>
+                </Dialog>
+            </div>
+
+            {/* done creating */}
+
+            {/*selection */}
+            <div className="dark_overlay" style={{
+                display: `${!sltction ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '24vw' }} onHide={() => setSlction(false)}>
+                    <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
+                    <div className="flex text-center">
+                        <div className=""></div>
+                        <div className="button text-center">
+                            <Button type="button" className=" btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'red', height: '50px', fontWeight: 300, width: '180px', textAlign: 'center',
+                                color:'white',
+                                margin:'4px'
+                            }} onClick={() => {
+                                toast.success('deleted successiful!');
+                                setSlction(false);
+                            }}> <Trash3Fill />Delete Department</Button>
+                        </div>
+                        <div className="button text-center">
+                            <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'var(--ocean)', height: '50px', fontWeight: 300, width: '180px', textAlign: 'center',
+                                color:'white',
+                                margin:'4px'
+                            }} onClick={() => {
+                                setSlction(false);
+                                setUpdating(true);
+                            }}> <PenFill />Update Department</Button>
+                        </div>
+                    </div>
+                </Dialog>
+            </div>
+            {/* done selection */}
+
+
+            {/* creating */}
+            <div className="dark_overlay" style={{
+                display: `${!updating ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={updating} style={{ width: '45vw' }} onHide={() => setUpdating(false)}>
+                    <h3 className="page-title text-bold" style={{
+                        borderBottom: '1.5px solid var(--shadow_color)',
+                        paddingBottom: '10px'
+                    }}>
+                        UPDATE COURSE
+                    </h3>
                     <div className="flex_2">
 
                         <div className="input m-1">
                             <div className="span">
                                 <h4 className="text-muted page-title">Department <span>*</span></h4>
                             </div>
-                            <input type="text" value={dname} onChange={(e) => setDname(e.target.value)}/>
+                            <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
+                                border: "none !important"
 
+                            }} dropdown />
                         </div>
-
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Supervisor  ID <span>*</span></h4>
+                                <h4 className="text-muted page-title">Course Code<span>*</span></h4>
                             </div>
-                            <input type="text" value={super_id} onChange={(e) => setSuper_id(e.target.value)}/>
-                        </div>
-                    </div>
-
-                    <div className="flex_2">
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Mobile <span>*</span></h4>
-                            </div>
-                            <input type="text" value={mobile} onChange={(e) => setMobile(e.target.value)}/>
+                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
 
                         </div>
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Email <i>(option)</i></h4>
-                            </div>
-                            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                        </div>
-                    </div>
-                    <div className="flex_2">
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Password <span>*</span></h4>
-                            </div>
-                            <input type="text" value={password} onChange={(e) => setPassword(e.target.value)}/>
-
-                        </div>
-
 
                     </div>
                     <div className="input m-1">
                         <div className="span">
-                            <h4 className="text-muted page-title">Location <span>*</span></h4>
+                            <h4 className="text-muted page-title">Course Name <span>*</span></h4>
                         </div>
-                        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)}/>
+                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+
                     </div>
-
-                    <div className="button p-4" style={{
-                        display: "grid",
-                        gridTemplateColumns: "auto 150px auto"
-                    }}>
-                        <div className=""></div>
-                        <Button className={'active-btn'} style={{
-                            display: 'flex'
-                        }} onClick={() => {
-                            handleSubmit();
-                            setVisible(false);
-
-                        }}><i><CloudPlusFill /></i> <span className='ml-2 -mt-1' style={{
-                            marginTop: '-2px'
-                        }}>Add Supervisor</span></Button>
+                    <div className="button text-center">
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
+                        }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
                     </div>
                 </Dialog>
             </div>
+
+            {/* done creating */}
+
+
             <div className="flex_box" style={{
                 '--width': '240px', '--width-two': 'auto', '--height': '100vh'
             }}>
-                <div className="left-screen-view">
+
+                <div className="left-screen-view" style={{
+                    position: 'relative',
+                    zIndex: "50"
+                }}>
                     <Sidebar />
                 </div>
                 <div className="right-screen-view">
                     <BarTop />
                     <Topbar
-                        headline={"Welcome to Academic Year"}
-                        subheadline={"Dashboard"}
-                        note={"2022/2023"}
+                        headline={"Place of Selection"}
+                        subheadline={"selections"}
+                        note={""}
                     />
                     <div className="" style={{
                         paddingTop: '20px'
@@ -429,10 +482,10 @@ const Dashboard = () => {
                         }}>
                             <div className="data_table">
                                 <Tooltip target=".export-buttons>button" position="bottom" />
-                               
-                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'department', 'super_id', 'mobile', 'location']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Supervisor Yet." header={header}
+
+                                <DataTable ref={dt} value={project} paginator rows={5} filters={filters} globalFilterFields={['name', 'category', 'sn', 'description', 'domain', 'supervisor', 'remarks', 'students', 'year']} rowsPerPageOptions={[5, 10, 25, 50]} emptyMessage="No Module found."
                                     paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-                                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
+                                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} header={header} tableStyle={{ minWidth: '50rem' }} selectionMode='single' selection={selected} onSelectionChange={(e) => setSelected(e.value)} dataKey="id"
                                     onRowSelect={onRowSelect} onRowUnselect={onRowSelect} metaKeySelection={false}>
                                     {cols.map((col) => (
                                         <Column key={col.field} className="border_box p-4" style={{ borderColor: "var(--dark) !important" }} sortable field={col.field} header={col.header} />

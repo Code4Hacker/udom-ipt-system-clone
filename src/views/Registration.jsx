@@ -34,44 +34,57 @@ const Registration = () => {
     if (!(username.length < 2) && !(password.length < 2)) {
 
       let the_body = JSON.stringify({
-        "t_number": username,
+        "username": username,
         "password": password
       });
+      let headersList = {
+        "Accept": "*/*",
+        "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+        "Content-Type": "application/json" 
+       }
+      // toast.loading("Redirecting...");
+      // setTimeout(() => {
+      //   toast.dismiss();
+      //   navigate("/dashboard");
+      // }, 1500);
+      
       try {
         const checkingUser = await axios.request({
-          url: `${baseURL}student_ul.php`,
+          url: `${baseURL}auth/login`,
           method: "POST",
-          data: the_body
+          data: the_body,
+          headers:  headersList
         });
-        if (checkingUser.data.status === 200) {
+        console.log(checkingUser.data);
+        if (checkingUser.data.code === 9000) {
           toast.success("Credential are Valid!\nlogin Successiful...");
           setTimeout(() => {
             toast.loading("Redirecting...");
             show ? setShow(false) : setShow(true);
             setShow(true);
-            switch (checkingUser.data.success) {
-              case "student":
-                window.localStorage.setItem("std_usr", username);
-                window.localStorage.setItem("role", "std");
-                setTimeout(() => {
-                  toast.dismiss();
-                  navigate("/user_board");
-                }, 1500);
-                break;
-              case "supervisor":
-                window.localStorage.setItem("super", username);
-                window.localStorage.setItem("role", "super");
-                setTimeout(() => {
-                  toast.dismiss();
-                  navigate("/super_dashboard");
-                }, 1500);
-                break;
-              case "administrator":
-                window.localStorage.setItem("admin", username);
+            switch (checkingUser.data.userType) {
+              // case "student":
+              //   window.localStorage.setItem("std_usr", username);
+              //   window.localStorage.setItem("role", "std");
+              //   setTimeout(() => {
+              //     toast.dismiss();
+              //     navigate("/user_board");
+              //   }, 1500);
+              //   break;
+              // case "supervisor":
+              //   window.localStorage.setItem("super", username);
+              //   window.localStorage.setItem("role", "super");
+              //   setTimeout(() => {
+              //     toast.dismiss();
+              //     navigate("/super_dashboard");
+              //   }, 1500);
+              //   break;
+              case "SUPER_ADMIN":
+                window.localStorage.setItem("admin", checkingUser.data.token);
                 window.localStorage.setItem("role", "admin");
                 setTimeout(() => {
                   toast.dismiss();
-                  navigate("/admin_dashboard");
+                  navigate("/dashboard");
                 }, 1500);
                 break;
               default:
@@ -83,14 +96,14 @@ const Registration = () => {
         }
 
       } catch (error) {
-        toast.error(`Something went wrong! \n ${error}`)
+        toast.error(`Something went wrong! \n ${error}`);
+
+        console.log(error)
       }
 
     }
   }
-  // const clear = () => {
-  //   window.localStorage.clear();
-  // }
+  
   const load = () => {
     setLoading(true);
 
@@ -98,32 +111,7 @@ const Registration = () => {
       setLoading(false);
     }, 2000);
   };
-  // useEffect(() => clear());
     const form = useRef();
-  
-    const sendEmail = async() => {
-      try {
-        const response = await emailjs.send('service_r77en09','template_daikb7k', {name:"GeminiArc", recipient:"paulprogrammer947@gmail.com", from_name:"GeminiArc2", "message":"I miss you, please work"});
-        
-
-        console.log(response);
-      } catch (error) {
-        console.log("ERROR", error)
-      }
-      
-    }
-
-    useEffect(() => { 
-      // emailjs.init("pGoqf69cjpYVPD8xZ");
-      // sendEmail()
-    },[]);
-
-
-
-
-
-
-
 
   return (
     <>
@@ -136,7 +124,7 @@ const Registration = () => {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
 
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            IPT ASSESSMENT  SYSTEM SIGN IN
+            SCHOOL ADMINISTRATION
           </h2>
         </div>
 

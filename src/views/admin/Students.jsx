@@ -5,27 +5,29 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
-import { FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg } from 'react-bootstrap-icons';
+import { EyeFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, PenFill, Plus, PlusCircle, Trash3Fill } from 'react-bootstrap-icons';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import toast, { Toaster } from 'react-hot-toast';
 import jQuery from 'jquery';
 import studentRaws from "../../raws/studentprojects.json";
 import { Dialog } from 'primereact/dialog';
-import { Divider } from 'primereact/divider';
 import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
 import { udom_logo } from '../../assets';
 import { useNavigate } from 'react-router';
 import { AutoComplete } from 'primereact/autocomplete';
 
-const PlaceSelection = () => {
+const StudentAdm = () => {
     const [project, setProject] = useState([]);
     const [filters, setFilters] = useState(null);
     const [selected, setSelected] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [visible, setVisible] = useState(false);
+    const [sltction, setSlction] = useState(false);
+    const [updating, setUpdating] = useState(false);
     const [selectedDomain, setselectedDomain] = useState(null);
+    const [parameters, setParameters] = useState();
 
     const [Domains, setDomains] = useState([]);
     const [filteredDomains, setFilteredDomains] = useState(null);
@@ -137,7 +139,9 @@ const PlaceSelection = () => {
         jQuery(event.originalEvent.target).css({
             "background-color": 'var(--alice)'
         })
-        navigate(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        // navigate(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        setParameters(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        setSlction(!false);
 
     };
 
@@ -151,17 +155,18 @@ const PlaceSelection = () => {
         })
 
     };
+    const viewSubjects = () => {
+        setSlction(false);
+        navigate(parameters);
+
+    }
     const dt = useRef(null);
 
     const cols = [
         { field: 'sn', header: '#' },
-        { field: 'name', header: 'Place Name' },
-        { field: 'category', header: 'Category' },
-        { field: 'domain', header: 'Capacity' },
-        { field: 'description', header: 'Branch' },
-        { field: 'supervisor', header: 'Area' },
-        { field: 'remarks', header: 'Region' },
-        { field: 'students', header: 'District' }
+        { field: 'name', header: 'Department' },
+        { field: 'category', header: 'Course Code' },
+        { field: 'domain', header: 'Course Name' }
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
@@ -267,7 +272,7 @@ const PlaceSelection = () => {
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
                 <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
                     backgroundColor: 'var(--ocean)', height: '45px'
-                }}><Plus /> Add Place Details</Button>
+                }}><Plus /> New Student</Button>
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -312,27 +317,27 @@ const PlaceSelection = () => {
             formdata.append("region", region);
             formdata.append("district", district);
             formdata.append("contact", contact);
-            if(selectedSupervisor !== null){
-                formdata.append("supervisor",selectedSupervisor.super);
+            if (selectedSupervisor !== null) {
+                formdata.append("supervisor", selectedSupervisor.super);
             }
             const bodydata = formdata;
 
             try {
                 const request = axios.request({
-                    url:`${baseURL}add_place.php`,
-                    method:"POST",
+                    url: `${baseURL}add_place.php`,
+                    method: "POST",
                     data: bodydata
                 });
-                if((await  request).data.status === 200){
+                if ((await request).data.status === 200) {
                     toast.success("Place Added Successiful!");
                     setVisible(false);
                     getModulesDetails();
-                    setPlace_name("");setBranch("");setCapacity(); setArea(""); setDistrict(""); setRegion("");
-                }else{
+                    setPlace_name(""); setBranch(""); setCapacity(); setArea(""); setDistrict(""); setRegion("");
+                } else {
                     toast.error("Something went wrong!");
                 }
             } catch (error) {
-                
+
             }
 
         } else {
@@ -342,6 +347,7 @@ const PlaceSelection = () => {
     return (
         <div className='view user_board studentprojects'>
             <Toaster ref={toast} position='top-right' color='white' />
+            {/* creating */}
             <div className="dark_overlay" style={{
                 display: `${!visible ? 'none' : 'block'}`
             }}>
@@ -350,90 +356,137 @@ const PlaceSelection = () => {
                         borderBottom: '1.5px solid var(--shadow_color)',
                         paddingBottom: '10px'
                     }}>
-                        Add Place Details
+                        CREATE COURSE
                     </h3>
                     <div className="flex_2">
 
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Place Name <span>*</span></h4>
-                            </div>
-                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
-
-                        </div>
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Category/Domain <span>*</span></h4>
+                                <h4 className="text-muted page-title">Department <span>*</span></h4>
                             </div>
                             <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
                                 border: "none !important"
 
                             }} dropdown />
                         </div>
+                        <div className="input m-1">
+                            <div className="span">
+                                <h4 className="text-muted page-title">Course Code<span>*</span></h4>
+                            </div>
+                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
+
+                        </div>
+
                     </div>
-                    <div className="flex_2">
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Capacity <span>*</span></h4>
-                            </div>
-                            <input type="number" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
+                    <div className="input m-1">
+                        <div className="span">
+                            <h4 className="text-muted page-title">Course Name <span>*</span></h4>
                         </div>
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Branch <span>*</span></h4>
-                            </div>
-                            <input type="text" value={branch} onChange={(e) => setBranch(e.target.value)} />
+                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+
+                    </div>
+                    <div className="button text-center">
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
+                        }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
+                    </div>
+                </Dialog>
+            </div>
+
+            {/* done creating */}
+
+            {/*selection */}
+            <div className="dark_overlay" style={{
+                display: `${!sltction ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '30vw' }} onHide={() => setSlction(false)}>
+                    <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
+                    <div className="flex text-center">
+                        <div className=""></div>
+                        <div className="button text-center">
+                            <Button type="button" className=" btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'red', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color:'white',
+                                margin:'4px'
+                            }} onClick={() => {
+                                toast.success('deleted successiful!');
+                                setSlction(false);
+                            }}> <Trash3Fill />Delete Course</Button>
+                        </div>
+                        <div className="button text-center">
+                            <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'var(--ocean)', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color:'white',
+                                margin:'4px'
+                            }} onClick={() => {
+                                setSlction(false);
+                                setUpdating(true);
+                            }}> <PenFill />Update Course</Button>
+                        </div>
+                        <div className="button text-center" style={{
+                            color:'red !important',
+                        }}>
+                            <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'var(--green)', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color:'white',
+                                margin:'4px'
+                            }} onClick={viewSubjects}> <EyeFill /> View Subjects</Button>
                         </div>
                     </div>
-                    <div className="flex_2">
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Area <span>*</span></h4>
-                            </div>
-                            <input type="text" value={area} onChange={(e) => setArea(e.target.value)} />
-                        </div>
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Region <span>*</span></h4>
-                            </div>
-                            <input type="text" value={region} onChange={(e) => setRegion(e.target.value)} />
-                        </div>
-                    </div>
+                </Dialog>
+            </div>
+            {/* done selection */}
+
+
+            {/* creating */}
+            <div className="dark_overlay" style={{
+                display: `${!updating ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={updating} style={{ width: '45vw' }} onHide={() => setUpdating(false)}>
+                    <h3 className="page-title text-bold" style={{
+                        borderBottom: '1.5px solid var(--shadow_color)',
+                        paddingBottom: '10px'
+                    }}>
+                        UPDATE COURSE
+                    </h3>
                     <div className="flex_2">
 
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">District <span>*</span></h4>
+                                <h4 className="text-muted page-title">Department <span>*</span></h4>
                             </div>
-                            <input type="text" value={district} onChange={(e) => setDistrict(e.target.value)} />
-
-                        </div>
-
-                        <div className="input m-1">
-                            <div className="span">
-                                <h4 className="text-muted page-title">Supervisor <span>*</span></h4>
-                            </div>
-                            <AutoComplete className='auto_cp' field="name" value={selectedSupervisor} suggestions={filteredSupervisors} completeMethod={search3} onChange={superchange} style={{
+                            <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
                                 border: "none !important"
 
                             }} dropdown />
                         </div>
-                    </div>
-                    <div className="input m-1">
+                        <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">PHONE NUMBER <span>*</span></h4>
+                                <h4 className="text-muted page-title">Course Code<span>*</span></h4>
                             </div>
-                            <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
 
                         </div>
+
+                    </div>
+                    <div className="input m-1">
+                        <div className="span">
+                            <h4 className="text-muted page-title">Course Name <span>*</span></h4>
+                        </div>
+                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+
+                    </div>
                     <div className="button text-center">
                         <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
                             backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
-                        }} onClick={handleSubmit}> <PlusCircle />Save the place</Button>
+                        }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
                     </div>
                 </Dialog>
             </div>
+
+            {/* done creating */}
+
+
             <div className="flex_box" style={{
                 '--width': '240px', '--width-two': 'auto', '--height': '100vh'
             }}>
@@ -477,4 +530,4 @@ const PlaceSelection = () => {
     )
 }
 
-export default PlaceSelection
+export default StudentAdm

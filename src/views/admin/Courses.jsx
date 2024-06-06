@@ -5,119 +5,37 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
-import { FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, Plus, PlusCircle, PlusLg } from 'react-bootstrap-icons';
+import { EyeFill, FileArrowUp, FilePdfFill, FiletypeXlsx, Filter, PenFill, Plus, PlusCircle, Trash3Fill } from 'react-bootstrap-icons';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
 import toast, { Toaster } from 'react-hot-toast';
 import jQuery from 'jquery';
 import studentRaws from "../../raws/studentprojects.json";
 import { Dialog } from 'primereact/dialog';
-import { Divider } from 'primereact/divider';
 import axios from 'axios';
 import { baseURL } from '../../paths/base_url';
+import { udom_logo } from '../../assets';
+import { useNavigate } from 'react-router';
 import { AutoComplete } from 'primereact/autocomplete';
-import { Chips } from "primereact/chips";
 
-const StudentProjects = () => {
+const Courses = () => {
     const [project, setProject] = useState([]);
     const [filters, setFilters] = useState(null);
     const [selected, setSelected] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [visible, setVisible] = useState(false);
+    const [sltction, setSlction] = useState(false);
+    const [updating, setUpdating] = useState(false);
+    const [selectedDomain, setselectedDomain] = useState(null);
+    const [parameters, setParameters] = useState();
 
-
-    const [Students, setStudents] = useState([]);
-    const [selectedStudent, setSelectedStudent] = useState([]);
-    const [filteredStudents, setFilteredStudents] = useState(null);
+    const [Domains, setDomains] = useState([]);
+    const [filteredDomains, setFilteredDomains] = useState(null);
+    const storage = window.localStorage;
 
     const [Supervisors, setSupervisors] = useState([]);
     const [selectedSupervisor, setSelectedSupervisor] = useState(null);
     const [filteredSupervisors, setFilteredSupervisors] = useState(null);
-
-
-    const [Domains, setDomains] = useState([]);
-    const [selectedDomain, setselectedDomain] = useState(null);
-    const [filteredDomains, setFilteredDomains] = useState(null);
-    const [value, setValue] = useState([]);
-    const p_categ = ["", "Industrial Practical Training(IPT)", "Final Year Project(FYP)"];
-
-
-
-    const [title, setTitle] = useState();
-    const [category, setCategory] = useState();
-    const [domain, setDomain] = useState();
-    const [supe, setSupe] = useState();
-    const [descr, setDescr] = useState();
-    const [year, setYear] = useState();
-    const [remarks, setRemarks] = useState();
-    const handleSubmit = async () => {
-        let formdata = new FormData();
-        let connects = "";
-        for (let index = 0; index < selectedStudent.length; index++) {
-            const element = selectedStudent[index].name;
-            if (index >= selectedStudent.length -1) {
-
-                connects = connects.concat(element);
-            } else {
-
-                connects = connects.concat(element + ", ");
-            }
-        }
-        console.log(connects);
-        formdata.append("title", title);
-        formdata.append("category", category);
-        formdata.append("domain", selectedDomain.name);
-        formdata.append("descr", descr);
-        formdata.append("supervisor", selectedSupervisor.name);
-        formdata.append("remarks", remarks);
-        formdata.append("students", connects);
-        formdata.append("years", year);
-
-        let bodyContent = formdata;
-
-        let script = {
-            method: "POST",
-            url: `${baseURL}add_projects.php`,
-            data: bodyContent
-
-        }
-
-        try {
-            const request = axios.request(
-                script
-            );
-            console.log((await request).data);
-            if((await request).data.status === 200){
-                toast.success("project added Successiful");
-                getModulesDetails();
-                setVisible(false);
-            }else{
-
-                toast.error("Error\n"+(await request).data.message);
-            }
-        } catch (error) {
-            toast.error("something went Wrong\n"+ error);
-        }
-
-    }
-    const search2 = (event) => {
-
-        setTimeout(() => {
-            let _filteredDomains;
-
-            if (!event.query.trim().length) {
-                _filteredDomains = [...Domains];
-            }
-            else {
-                _filteredDomains = Domains.filter((Supervisor) => {
-                    // console.log("filtered", _filteredDomains)
-                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
-                });
-            }
-
-            setFilteredDomains(_filteredDomains);
-        }, 250);
-    }
 
     const search3 = (event) => {
 
@@ -137,26 +55,24 @@ const StudentProjects = () => {
             setFilteredSupervisors(_filteredSupervisors);
         }, 250);
     }
-    const search = (event) => {
+    const search2 = (event) => {
 
         setTimeout(() => {
-            let _filteredStudents;
+            let _filteredDomains;
 
             if (!event.query.trim().length) {
-                _filteredStudents = [...Students];
+                _filteredDomains = [...Domains];
             }
             else {
-                _filteredStudents = Students.filter((Supervisor) => {
-                    console.log("filtered", _filteredStudents)
+                _filteredDomains = Domains.filter((Supervisor) => {
+                    // console.log("filtered", _filteredDomains)
                     return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
                 });
             }
 
-            setFilteredStudents(_filteredStudents);
+            setFilteredDomains(_filteredDomains);
         }, 250);
     }
-    document.querySelector(".p-autocomplete-token-label") ? document.querySelector(".p-autocomplete-token-label").innerHTML = document.querySelector(".p-autocomplete-token-label").innerHTML.substring(0, 2) + "..." : "";
-    // for supervisor
     const getModulesSuper = async () => {
         try {
             const requests = axios.request({
@@ -171,48 +87,61 @@ const StudentProjects = () => {
     const superchange = (e) => {
         setSelectedSupervisor(e.value);
     }
-    // for domain
-    const getModulesDomain = async () => {
+    const handleSubmitSelection = async (event, id) => {
+        let forma = (new FormData());
+        forma.append("studentId", storage.getItem("std_usr"));
+        let bodydata = forma;
         try {
             const requests = axios.request({
                 method: "POST",
-                url: `${baseURL}domains.php`
+                url: `${baseURL}con_std.php`,
+                data: bodydata
             });
-            setDomains((await requests).data);
+            const { academic, about, selection } = (await requests).data[0];
+
+            if (selection.length > 0) {
+                toast.error("Sorry, we see that your selection board is not empty... You can't add more!");
+
+            } else {
+                let newData = (new FormData());
+                newData.append("student", storage.getItem("std_usr"));
+                newData.append("selection", event.data.sn);
+
+
+                let bodydata = newData;
+                try {
+                    const requests = axios.request({
+                        method: "POST",
+                        url: `${baseURL}add_select.php`,
+                        data: bodydata
+                    });
+                    console.log((await requests).data);
+                    if ((await requests).data.status === 200) {
+                        toast.dismiss(id.id);
+                        toast.success("Selection Success");
+                        setTimeout(() => {
+                            toast.dismiss();
+                        }, 3000);
+                    } else { toast.error("Something went wrong, try again!"); }
+                } catch (error) {
+                    toast.error(`Something went wrong\n${error}`);
+                }
+            }
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
     }
-    // for students
-    const getModulesStd = async () => {
-        try {
-            const requests = axios.request({
-                method: "POST",
-                url: `${baseURL}student_names.php`
-            });
-            setStudents((await requests).data);
-        } catch (error) {
-            toast.error(`Something went wrong\n${error}`);
-        }
-    }
-    useEffect(() => {
-        getModulesStd();
-        getModulesSuper();
-        getModulesDomain();
-    }, []);
-
-
-
-    // const toast = useRef(null);
-
+    const navigate = useNavigate();
     const onRowSelect = (event) => {
-        toast.success(`You've Select -> ${event.data.name}`);
         jQuery("td").css({
             "background-color": 'var(--light)'
         })
         jQuery(event.originalEvent.target).css({
             "background-color": 'var(--alice)'
         })
+        // navigate(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        setParameters(`/selection_place/${event.data.remarks}_13_${event.data.students}_13_${event.data.supervisor}_13_${event.data.name}_13_${event.data.description}`);
+        setSlction(!false);
 
     };
 
@@ -226,18 +155,18 @@ const StudentProjects = () => {
         })
 
     };
+    const viewSubjects = () => {
+        setSlction(false);
+        navigate(parameters);
+
+    }
     const dt = useRef(null);
 
     const cols = [
         { field: 'sn', header: '#' },
-        { field: 'name', header: 'Project Title' },
-        { field: 'category', header: 'Project Category' },
-        { field: 'domain', header: 'Project Domain' },
-        { field: 'description', header: 'Project Description' },
-        { field: 'supervisor', header: 'Project Supervisor' },
-        { field: 'remarks', header: 'Project Remarks' },
-        { field: 'students', header: 'Participating Students' },
-        { field: 'year', header: 'Year' },
+        { field: 'name', header: 'Department' },
+        { field: 'category', header: 'Course Code' },
+        { field: 'domain', header: 'Course Name' }
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
@@ -245,42 +174,16 @@ const StudentProjects = () => {
         try {
             const requests = axios.request({
                 method: "POST",
-                url: `${baseURL}projects.php`
-            });
-
-            let fulled = [];
-            let obj = new Object();
-            let arr = new Array();
-            for (let index = 0; index < (await requests).data.length; index++) {
-                const element = (await requests).data[index];
-                // console.log(element.students)
-                fulled = [];
-                for (let std = 0; std < element.students.length; std++) {
-                    const el = element.students[std].student;
-                    fulled.push(el.replace("___", "(").replace("__","(").replace("_","(").replace("____","("));
-
-                }
-                obj = {
-                    sn: element.sn,
-                    name: element.name,
-                    category: element.category,
-                    domain: element.domain,
-                    description: element.description,
-                    supervisor: element.supervisor,
-                    remarks: element.remarks,
-                    students: fulled.join(", \n").replace("___", "(").replace("__","(").replace("_","(").replace("____","("),
-                    year: element.year
-                }
-                // fulled = fulled.concat(" \n\n\n\n\n")
-                arr.push(obj);
-                setProject(arr);
-            }
+                url: `${baseURL}adm_place.php`
+            }); setProject((await requests).data);
         } catch (error) {
             toast.error(`Something went wrong\n${error}`);
         }
     }
     useEffect(() => {
         getModulesDetails();
+        getModulesDomain();
+        getModulesSuper();
         initFilters();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -369,7 +272,7 @@ const StudentProjects = () => {
                 <Button type="button" className="mv_btn" outlined onClick={clearFilter} style={{ height: '40px' }}><Filter /> Clear</Button>
                 <Button type="button" className="mv_btn ms-5 mb-3" outlined onClick={() => setVisible(true)} style={{
                     backgroundColor: 'var(--ocean)', height: '45px'
-                }}><Plus /> Add Student Project</Button>
+                }}><Plus /> Create New Course</Button>
                 <span className="p-input-icon-left text-end mb-4" style={{ color: 'var(--dark)', marginTop: '-10px' }}>
 
                     <br />
@@ -381,10 +284,70 @@ const StudentProjects = () => {
 
         </div>
     );
+    const getModulesDomain = async () => {
+        try {
+            const requests = axios.request({
+                method: "POST",
+                url: `${baseURL}domains.php`
+            });
+            setDomains((await requests).data);
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
+        }
+    }
+    // inputs states
+
+    const [place_name, setPlace_name] = useState("");
+    const [capacity, setCapacity] = useState("");
+    const [branch, setBranch] = useState("");
+    const [area, setArea] = useState("");
+    const [region, setRegion] = useState("");
+    const [district, setDistrict] = useState("");
+    const [contact, setContact] = useState("");
+
+    const handleSubmit = async () => {
+        console.log(selectedSupervisor, selectedDomain);
+        if (place_name !== "" && capacity !== "" && branch !== "" && area !== "" && region !== "" && district !== "" && selectedDomain !== null) {
+            let formdata = new FormData();
+            formdata.append("place_name", place_name);
+            formdata.append("category", selectedDomain.name);
+            formdata.append("capacity", capacity);
+            formdata.append("branch", branch);
+            formdata.append("area", area);
+            formdata.append("region", region);
+            formdata.append("district", district);
+            formdata.append("contact", contact);
+            if (selectedSupervisor !== null) {
+                formdata.append("supervisor", selectedSupervisor.super);
+            }
+            const bodydata = formdata;
+
+            try {
+                const request = axios.request({
+                    url: `${baseURL}add_place.php`,
+                    method: "POST",
+                    data: bodydata
+                });
+                if ((await request).data.status === 200) {
+                    toast.success("Place Added Successiful!");
+                    setVisible(false);
+                    getModulesDetails();
+                    setPlace_name(""); setBranch(""); setCapacity(); setArea(""); setDistrict(""); setRegion("");
+                } else {
+                    toast.error("Something went wrong!");
+                }
+            } catch (error) {
+
+            }
+
+        } else {
+            toast.error("All field Required to be filled!");
+        }
+    }
     return (
         <div className='view user_board studentprojects'>
             <Toaster ref={toast} position='top-right' color='white' />
-            {/* <Button label="Show" icon="pi pi-external-link" onClick={() => setVisible(true)} /> */}
+            {/* creating */}
             <div className="dark_overlay" style={{
                 display: `${!visible ? 'none' : 'block'}`
             }}>
@@ -393,91 +356,141 @@ const StudentProjects = () => {
                         borderBottom: '1.5px solid var(--shadow_color)',
                         paddingBottom: '10px'
                     }}>
-                        Add Student Project
+                        CREATE COURSE
                     </h3>
-
-
-                    <div className="input m-1">
-                        <div className="span">
-                            <h4 className="text-muted page-title">Project Title <span>*</span></h4>
-                        </div>
-                        <input type="text" className='primary' value={title} onChange={(e) => setTitle(e.target.value)}/>
-                    </div>
                     <div className="flex_2">
 
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Project Domain <span>*</span></h4>
+                                <h4 className="text-muted page-title">Department <span>*</span></h4>
                             </div>
                             <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
                                 border: "none !important"
 
                             }} dropdown />
-
                         </div>
-
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Supervisor <span>*</span></h4>
+                                <h4 className="text-muted page-title">Course Code<span>*</span></h4>
                             </div>
-                            <AutoComplete className='auto_cp' field="name" value={selectedSupervisor} suggestions={filteredSupervisors} completeMethod={search3} onChange={superchange} style={{
-                                border: "none !important"
+                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
 
-                            }} dropdown />
+                        </div>
+
+                    </div>
+                    <div className="input m-1">
+                        <div className="span">
+                            <h4 className="text-muted page-title">Course Name <span>*</span></h4>
+                        </div>
+                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+
+                    </div>
+                    <div className="button text-center">
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
+                        }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
+                    </div>
+                </Dialog>
+            </div>
+
+            {/* done creating */}
+
+            {/*selection */}
+            <div className="dark_overlay" style={{
+                display: `${!sltction ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={sltction} style={{ width: '30vw' }} onHide={() => setSlction(false)}>
+                    <h1 className='text-center p-2 text-bold'>CHOOSE ACTION</h1>
+                    <div className="flex text-center">
+                        <div className=""></div>
+                        <div className="button text-center">
+                            <Button type="button" className=" btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'red', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color:'white',
+                                margin:'4px'
+                            }} onClick={() => {
+                                toast.success('deleted successiful!');
+                                setSlction(false);
+                            }}> <Trash3Fill />Delete Course</Button>
+                        </div>
+                        <div className="button text-center">
+                            <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'var(--ocean)', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color:'white',
+                                margin:'4px'
+                            }} onClick={() => {
+                                setSlction(false);
+                                setUpdating(true);
+                            }}> <PenFill />Update Course</Button>
+                        </div>
+                        <div className="button text-center" style={{
+                            color:'red !important',
+                        }}>
+                            <Button type="button" className="btn_btn mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                                backgroundColor: 'var(--green)', height: '50px', fontWeight: 300, width: '150px', textAlign: 'center',
+                                color:'white',
+                                margin:'4px'
+                            }} onClick={viewSubjects}> <EyeFill /> View Subjects</Button>
                         </div>
                     </div>
+                </Dialog>
+            </div>
+            {/* done selection */}
 
+
+            {/* creating */}
+            <div className="dark_overlay" style={{
+                display: `${!updating ? 'none' : 'block'}`
+            }}>
+                <Dialog header="" className='white_box modal_box' visible={updating} style={{ width: '45vw' }} onHide={() => setUpdating(false)}>
+                    <h3 className="page-title text-bold" style={{
+                        borderBottom: '1.5px solid var(--shadow_color)',
+                        paddingBottom: '10px'
+                    }}>
+                        UPDATE COURSE
+                    </h3>
                     <div className="flex_2">
 
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Project Category <span>*</span></h4>
+                                <h4 className="text-muted page-title">Department <span>*</span></h4>
                             </div>
-                            <select style={{
-                                marginTop: "10px",
-                                padding: "11px",
-                                fontSize: "small"
-                            }} name="" id=""  value={category} onChange={(e) => setCategory(e.target.value)}>
-                                {
-                                    p_categ.map((dt, key) => <option value={dt} key={key}>{dt}</option>)
-                                }
-                            </select>
-                        </div>
+                            <AutoComplete className='auto_cp' field="name" value={selectedDomain} suggestions={filteredDomains} completeMethod={search2} onChange={(e) => setselectedDomain(e.value)} style={{
+                                border: "none !important"
 
+                            }} dropdown />
+                        </div>
                         <div className="input m-1">
                             <div className="span">
-                                <h4 className="text-muted page-title">Project Remarks <span>*</span></h4>
+                                <h4 className="text-muted page-title">Course Code<span>*</span></h4>
                             </div>
-                            <input type="text" className='primary'  value={remarks} onChange={(e) => setRemarks(e.target.value)} />
-                        </div>
-                    </div>
-                    <div className="input m-1">
-                        <div className="span">
-                            <h4 className="text-muted page-title">Select Student(s) <span>*</span></h4>
-                        </div>
-                        <Tooltip target={".p-fluid"} position='bottom'>
-                        </Tooltip>
-                        <AutoComplete className='auto_cp' field="name" value={selectedStudent} multiple suggestions={filteredStudents} completeMethod={search} onChange={(e) => setSelectedStudent(e.value)} style={{
-                            border: "none !important"
+                            <input type="text" value={place_name} onChange={(e) => setPlace_name(e.target.value)} />
 
-                        }} />
+                        </div>
+
                     </div>
                     <div className="input m-1">
                         <div className="span">
-                            <h4 className="text-muted page-title">Project Description/Functionality <span>*</span></h4>
+                            <h4 className="text-muted page-title">Course Name <span>*</span></h4>
                         </div>
-                        <textarea name="" id="" rows="5" className='primary' value={descr} onChange={(e) => setDescr(e.target.value)}></textarea>
+                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} />
+
                     </div>
                     <div className="button text-center">
-                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined onClick={handleSubmit} style={{
-                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '100px', textAlign: 'center'
-                        }}> <PlusCircle />Save</Button>
+                        <Button type="button" className="mv_btn btn_btn ms-5 mb-3 pt-0 pb-0 text-center text-sharp" outlined style={{
+                            backgroundColor: 'var(--ocean)', height: '45px', fontWeight: 300, width: '150px', textAlign: 'center'
+                        }} onClick={handleSubmit}> <PlusCircle />Save to Finish</Button>
                     </div>
                 </Dialog>
             </div>
+
+            {/* done creating */}
+
+
             <div className="flex_box" style={{
                 '--width': '240px', '--width-two': 'auto', '--height': '100vh'
             }}>
+
                 <div className="left-screen-view" style={{
                     position: 'relative',
                     zIndex: "50"
@@ -487,9 +500,9 @@ const StudentProjects = () => {
                 <div className="right-screen-view">
                     <BarTop />
                     <Topbar
-                        headline={"Student Projects Management"}
-                        subheadline={"Projects"}
-                        note={"2022/2023"}
+                        headline={"Place of Selection"}
+                        subheadline={"selections"}
+                        note={""}
                     />
                     <div className="" style={{
                         paddingTop: '20px'
@@ -517,5 +530,4 @@ const StudentProjects = () => {
     )
 }
 
-
-export default StudentProjects
+export default Courses

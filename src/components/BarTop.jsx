@@ -26,7 +26,7 @@ const BarTop = ({ username, menu, extras }) => {
         timeout: 10 * 60 * 1000
     });
     useEffect(() => {
-        if (!storage.getItem("super") && !storage.getItem("std_usr") && !storage.getItem("admin")) navigator("/");
+        // if (!storage.getItem("super") && !storage.getItem("std_usr") && !storage.getItem("admin")) navigator("/");
     }, [])
 
     const [visible, setVisible] = React.useState(false);
@@ -87,7 +87,7 @@ const BarTop = ({ username, menu, extras }) => {
                         borderBottom: '1.5px solid var(--shadow_color)',
                         paddingBottom: '10px'
                     }}>
-                        UDOM IPT/TP | <span className="" style={{
+                        School Administration SYS | <span className="" style={{
                             color: "green"
                         }}>( {storage.getItem("std_usr") ? storage.getItem("std_usr"): storage.getItem("super")? storage.getItem("super") : "gemini"} ) </span> Change My Password
                     </div>
