@@ -6,6 +6,7 @@ import './index.css'
 import { PrimeReactProvider } from 'primereact/api'
 import Tailwind from 'primereact/passthrough/tailwind';
 
+import 'rsuite/dist/rsuite.min.css';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <PrimeReactProvider  value={{ unstyled: true}}>

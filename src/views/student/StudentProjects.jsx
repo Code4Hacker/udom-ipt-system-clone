@@ -116,6 +116,7 @@ const StudentProjects = () => {
             }
 
             setFilteredDomains(_filteredDomains);
+            console.log("sjnonfonweonfowe",_filteredDomains)
         }, 250);
     }
 
