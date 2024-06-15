@@ -11,7 +11,6 @@ const AuthToken = () => {
     const [token, setToken] = useState("");
     const handleTokenSubmittion = async () => {
         setShow(false);
-        console.log("______________________***************_____________________")
         document.querySelector(".btn_token").style.background = "var(--dodge)";
         document.querySelector(".btn_token").style.backgroundColor = "royalblue";
         if (token !== "") {

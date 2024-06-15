@@ -55,12 +55,27 @@
             padding-left: 100px;
             padding-right: 100px;
             // background: linear-gradient(60deg, var(--dark) 700px, var(--dodge) 500px,var(--ocean) 80%);
-            background-color: rgba(56, 156, 250, 0.836);
+            background-color: rgba(0, 0, 0, 0.836);
             // border-radius: 50px;
             // margin: 10px;
             // box-shadow: 0px 0px 10px 0px var(--shadow_color);
             height: 90vh;
             overflow: scroll;
+        }
+    }
+    .flex_box.flex{
+        width: 100%;
+        display: flex;
+        background-color: rgb(0, 0, 0);
+        justify-content: space-between;
+        padding: 20px;
+
+        button{
+            background-color: var(--green);
+            margin: 10px;
+            padding: 15px;
+            border-radius: 50px;
+            font-size: small;
         }
     }
 }
