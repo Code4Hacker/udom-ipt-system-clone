@@ -25,10 +25,11 @@ const SSignIn = () => {
                 url: `${baseURL}externals_login.php`,
                 data: bodydata
             });
-            console.log((await request).data);
+            // console.log((await request).data);
             if ((await request).data.status === 200) {
                 toast.loading('login Successiful!')
                 window.localStorage.setItem("sv_token", (await request).data.token);
+                window.localStorage.setItem("suid", (await request).data.id);
                 setTimeout(() => {
                     toast.remove();
                     nav('/upload_assesments');

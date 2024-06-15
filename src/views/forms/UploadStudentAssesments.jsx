@@ -55,10 +55,10 @@ const USAssesments = () => {
 
 
     // supervisor
-    const [sname, setSname] = useState("");
-    const [positions, setPositions] = useState("");
-    const [email, setEmail] = useState("");
-    const [contact, setContact] = useState("");
+    // const [sname, setSname] = useState("");
+    // const [positions, setPositions] = useState("");
+    // const [email, setEmail] = useState("");
+    // const [contact, setContact] = useState("");
 
 
     useEffect(() => {
@@ -120,52 +120,65 @@ const USAssesments = () => {
 
     };
     const handleSubmitStudent = async () => {
-        const construct = {
-            fullname: fname,
-            tnumber: tnumber,
-            degree: degree,
-            year: year,
-            organization: address,
-            branch: branch,
-            region: region,
-            district: district,
-            from: from,
-            todate: todate,
-            haswork: haswork,
-            position: position,
-            duties: duties,
-            panctual: panctual,
-            regular: regular,
-            dressing: dressing,
-            confidental: confidental,
-            accountability: accountability,
-            descpline: descpline,
-            cooperate: cooperate,
-            aguidance: aguidance,
-            readiness: readiness,
-            conscio: conscio,
-            trustful: trustful,
-            caring: caring,
-            selfinit: selfinit,
-            decision: decision,
-            appearwork: appearwork,
-            reason: reason,
-            whatare: whatare,
-            waslogbook: waslogbook,
-            knowledge: knowledge,
-            willingness: willingness,
-            utilise: utilise,
-            creativity: creativity,
-            confidence: confidence,
-            hardworking: hardworking,
-            achievement: achievement,
-            whicharea: whicharea,
-            suggestion: suggestion,
-            tmanage: tmanage
-        }
+        if(fname, tnumber !=="", degree !=="", year !=="", address !=="", branch !=="", region !=="", district !=="", from !=="", todate !=="", haswork !=="", position !=="", duties !=="", panctual !=="", regular !=="", dressing !=="", confidental !=="", accountability !=="", descpline !=="", cooperate !=="", aguidance !=="", readiness !=="", conscio !=="", trustful !=="", caring !=="", selfinit !=="", decision !=="", appearwork !=="", reason !=="", whatare !=="", waslogbook !=="", knowledge !=="", willingness !=="", utilise !=="", creativity !=="", confidence !=="", hardworking !=="", achievement !=="", whicharea !=="", suggestion !==""){
+            const construct = {
+                fullname: fname,
+                tnumber: tnumber,
+                degree: degree,
+                year: year,
+                organization: address,
+                branch: branch,
+                region: region,
+                district: district,
+                from: from,
+                todate: todate,
+                haswork: haswork,
+                position: position,
+                duties: duties,
+                panctual: panctual,
+                regular: regular,
+                dressing: dressing,
+                confidental: confidental,
+                accountability: accountability,
+                descpline: descpline,
+                cooperate: cooperate,
+                aguidance: aguidance,
+                readiness: readiness,
+                conscio: conscio,
+                trustful: trustful,
+                caring: caring,
+                selfinit: selfinit,
+                decision: decision,
+                appearwork: appearwork,
+                reason: reason,
+                whatare: whatare,
+                waslogbook: waslogbook,
+                knowledge: knowledge,
+                willingness: willingness,
+                utilise: utilise,
+                creativity: creativity,
+                confidence: confidence,
+                hardworking: hardworking,
+                achievement: achievement,
+                whicharea: whicharea,
+                suggestion: suggestion,
+                super_id: localStorage.suid
+            }
+    
+            students.push(construct);
+            console.log(students);
 
-        students.push(construct);
-        console.log(students)
+            const request = axios.request({
+                url:`${baseURL}upload_student_assesments.php`,
+                method:'POST',
+                data: JSON.stringify(students)
+            });
+
+            console.log((await request).data);
+        }else{
+            toast.error("all fields required");
+        }
+        
     }
     return (
         <div className='main_upload'>
@@ -364,8 +377,8 @@ const USAssesments = () => {
                         <div className="">
 
                             <div className="flex_box flex">
-                                <button onClick={handleAnother}>Add Another</button>
-                                <button onClick={() => setShow_next(!show_next)}>Complete</button>
+                                {/* <button onClick={handleAnother}>Add Another</button> */}
+                                <button onClick={handleSubmitStudent}>Complete</button>
                             </div>
                         </div>
                     </div> :
