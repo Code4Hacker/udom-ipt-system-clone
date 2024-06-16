@@ -14,7 +14,7 @@ import studentRaws from "../../raws/studentprojects.json";
 import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import axios from 'axios';
-import { baseURL } from '../../paths/base_url';
+import { baseURL, senderURL } from '../../paths/base_url';
 import { udom_logo } from '../../assets';
 
 const PlaceView = () => {
@@ -281,7 +281,7 @@ const PlaceView = () => {
                     "source_addr": "INFO",
                     "schedule_time": "",
                     "encoding": "0",
-                    "message": `Attention!, We're Reminding you to submit student Assesments at http://172.17.20.225:5173/auth_token token key ${random}. Thank you`,
+                    "message": `Attention!, We're Reminding you to submit student Assesments at ${senderURL}:5173/auth_token token key ${random}. Thank you`,
                     "recipients": [{
                         "recipient_id": (i + 1),
                         "dest_addr": element

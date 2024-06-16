@@ -23,7 +23,7 @@ const Registration = () => {
   }
   const { getRemainingTime } = useIdleTimer({
     onIdle,
-    timeout: .11 * 60 * 1000
+    timeout: .11 * 60 * 10000
   });
   const handleSubmit = async () => {
     window.localStorage.clear();
@@ -44,6 +44,7 @@ const Registration = () => {
           data: the_body
         });
         if (checkingUser.data.status === 200) {
+          console.log(checkingUser.data)
           toast.success("Credential are Valid!\nlogin Successiful...");
           setTimeout(() => {
             toast.loading("Redirecting...");
@@ -53,6 +54,7 @@ const Registration = () => {
               case "student":
                 window.localStorage.setItem("std_usr", username);
                 window.localStorage.setItem("role", "std");
+                
                 setTimeout(() => {
                   toast.dismiss();
                   navigate("/user_board");
@@ -61,6 +63,7 @@ const Registration = () => {
               case "supervisor":
                 window.localStorage.setItem("super", username);
                 window.localStorage.setItem("role", "super");
+                window.localStorage.setItem("u_name", username);
                 setTimeout(() => {
                   toast.dismiss();
                   navigate("/super_dashboard");
@@ -69,6 +72,7 @@ const Registration = () => {
               case "administrator":
                 window.localStorage.setItem("admin", username);
                 window.localStorage.setItem("role", "admin");
+                window.localStorage.setItem("u_name", username);
                 setTimeout(() => {
                   toast.dismiss();
                   navigate("/admin_dashboard");
@@ -101,17 +105,17 @@ const Registration = () => {
   // useEffect(() => clear());
     const form = useRef();
   
-    const sendEmail = async() => {
-      try {
-        const response = await emailjs.send('service_r77en09','template_daikb7k', {name:"GeminiArc", recipient:"paulprogrammer947@gmail.com", from_name:"GeminiArc2", "message":"I miss you, please work"});
+    // const sendEmail = async() => {
+    //   try {
+    //     const response = await emailjs.send('service_r77en09','template_daikb7k', {name:"GeminiArc", recipient:"paulprogrammer947@gmail.com", from_name:"GeminiArc2", "message":"I miss you, please work"});
         
 
-        console.log(response);
-      } catch (error) {
-        console.log("ERROR", error)
-      }
+    //     console.log(response);
+    //   } catch (error) {
+    //     console.log("ERROR", error)
+    //   }
       
-    }
+    // }
 
     useEffect(() => { 
       // emailjs.init("pGoqf69cjpYVPD8xZ");

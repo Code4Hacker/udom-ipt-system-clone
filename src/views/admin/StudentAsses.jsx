@@ -239,13 +239,15 @@ const StudentAsses = () => {
         { field: 'aguidance', header: 'Accepting Guidance' },
         { field: 'caring', header: 'Caring' },
         { field: 'confidence', header: 'Confidence' },
-        { field: 'confidential', header: 'Confidential' },
+        { field: 'confidental', header: 'Confidential' },
         { field: 'cooperate', header: 'Cooperate' },
-        { field: 'discpline', header: 'Discpline' },
+        { field: 'descpline', header: 'Discpline' },
         { field: 'hardworking', header: 'Hardworking' },
         { field: 'fromDate', header: 'From Date' },
         { field: 'todate', header: 'To Date' },
         { field: 'yearN', header: 'Year' },
+        { field: 'sum', header: 'Total  Marks' },
+        { field: 'grade', header: 'GRADE' },
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 

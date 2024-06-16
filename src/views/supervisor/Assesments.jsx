@@ -241,6 +241,8 @@ const Assesments = () => {
         { field: 'fromDate', header: 'From Date' },
         { field: 'todate', header: 'To Date' },
         { field: 'yearN', header: 'Year' },
+        { field: 'sum', header: 'Total  Marks' },
+        { field: 'grade', header: 'GRADE' },
     ];
     const exportColumns = cols.map((col) => ({ title: col.header, dataKey: col.field }));
 
