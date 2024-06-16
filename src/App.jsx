@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { AfterVerify, ArrivalNote, AuthToken, Dashboard, IndividualStudent, Module, PlaceOfSlection, PlaceSelection, PlaceSupervisor, PlaceView, Registration, SSignIn, StudentAdm, StudentProjects, SuperDashboard, USAssesments, UserDashboard } from './views'
+import { AfterVerify, ArrivalNote, Assesments, AuthToken, Dashboard, IndividualStudent, Module, PlaceOfSlection, PlaceSelection, PlaceSupervisor, PlaceView, Registration, SSignIn, StudentAdm, StudentAsses, StudentProjects, SuperDashboard, USAssesments, UserDashboard } from './views'
 import { PrimeReactProvider } from 'primereact/api'
 import { Toaster } from 'react-hot-toast'
 import { LogBook } from './views'
@@ -18,7 +18,6 @@ const App = () => {
           <Route path='/place_selection' element={<PlaceOfSlection />} />
           <Route path='/logbook' element={<LogBook />} />
           <Route path='/arrival_note' element={<ArrivalNote />} />
-          {/* <Route path='/' element={<Testing/>} /> */}
           <Route path='/super_dashboard' element={<SuperDashboard />} />
           <Route path='/super_dashboard/:id' element={<IndividualStudent />} />
           <Route path='/admin_dashboard' element={<Dashboard />} />
@@ -30,6 +29,8 @@ const App = () => {
           <Route path='/after_verify' element={<AfterVerify />} />
           <Route path='/ss_sign_in' element={<SSignIn />} />
           <Route path='/upload_assesments' element={<USAssesments />} />
+          <Route path='/student_assesments' element={<StudentAsses />} />
+          <Route path='/assesments' element={<Assesments />} />
         </Routes>
       </BrowserRouter>
     </PrimeReactProvider>

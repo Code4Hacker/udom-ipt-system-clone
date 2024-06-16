@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { baseURL } from '../../paths/base_url';
 import { useNavigate } from 'react-router-dom';
 import { DatePicker, Divider } from 'rsuite';
+import { AutoComplete } from 'primereact/autocomplete';
 
 const USAssesments = () => {
     // console.log(((new Date()).toISOString()).split("T")[0])
@@ -52,75 +53,61 @@ const USAssesments = () => {
     const [suggestion, setSuggestion] = useState("");
 
     const [show_next, setShow_next] = useState(false);
+    const [Supervisors, setSupervisors] = useState([]);
+    const [selectedSupervisor, setSelectedSupervisor] = useState(null);
+    const [filteredSupervisors, setFilteredSupervisors] = useState(null);
 
+    const search3 = (event) => {
 
-    // supervisor
-    // const [sname, setSname] = useState("");
-    // const [positions, setPositions] = useState("");
-    // const [email, setEmail] = useState("");
-    // const [contact, setContact] = useState("");
+        setTimeout(() => {
+            let _filteredSupervisors;
 
+            if (!event.query.trim().length) {
+                _filteredSupervisors = [...Supervisors];
+            }
+            else {
+                _filteredSupervisors = Supervisors.filter((Supervisor) => {
+                    console.log("filtered", _filteredSupervisors)
+                    return Supervisor.name.toLowerCase().includes(event.query.toLowerCase());
+                });
+            }
 
+            setFilteredSupervisors(_filteredSupervisors);
+        }, 250);
+    }
+    document.querySelector(".p-autocomplete-token-label") ? document.querySelector(".p-autocomplete-token-label").innerHTML = document.querySelector(".p-autocomplete-token-label").innerHTML.substring(0, 2) + "..." : "";
+    
+    // for supervisor
+    const getModulesSuper = async () => {
+        try {
+            const requests = axios.request({
+                method: "POST",
+                url: `${baseURL}supervisor.php`
+            });
+            setSupervisors((await requests).data);
+        } catch (error) {
+            toast.error(`Something went wrong\n${error}`);
+        }
+    }
+    const superchange = (e) => {
+        setSelectedSupervisor(e.value);
+    }
     useEffect(() => {
         if (window.localStorage.sv_token !== undefined) {
             console.log(localStorage.sv_token);
         } else {
             nav('/ss_sign_in');
         }
+        getModulesSuper();
     }, []);
-    const students = new Array();
     const handleAnother = async () => {
-        const object = [];
-
-        const construct = {
-            fullname: fname,
-            tnumber: tnumber,
-            degree: degree,
-            year: year,
-            organization: address,
-            branch: branch,
-            region: region,
-            district: district,
-            from: from,
-            todate: todate,
-            haswork: haswork,
-            position: position,
-            duties: duties,
-            panctual: panctual,
-            regular: regular,
-            dressing: dressing,
-            confidental: confidental,
-            accountability: accountability,
-            descpline: descpline,
-            cooperate: cooperate,
-            aguidance: aguidance,
-            readiness: readiness,
-            conscio: conscio,
-            trustful: trustful,
-            caring: caring,
-            selfinit: selfinit,
-            decision: decision,
-            appearwork: appearwork,
-            reason: reason,
-            whatare: whatare,
-            waslogbook: waslogbook,
-            knowledge: knowledge,
-            willingness: willingness,
-            utilise: utilise,
-            creativity: creativity,
-            confidence: confidence,
-            hardworking: hardworking,
-            achievement: achievement,
-            whicharea: whicharea,
-            suggestion: suggestion,
-            tmanage: tmanage
-        }
-
-        students.push(construct);
+        window.localStorage.clear();
+        nav('/ss_sign_in');
 
     };
     const handleSubmitStudent = async () => {
-        if(fname, tnumber !=="", degree !=="", year !=="", address !=="", branch !=="", region !=="", district !=="", from !=="", todate !=="", haswork !=="", position !=="", duties !=="", panctual !=="", regular !=="", dressing !=="", confidental !=="", accountability !=="", descpline !=="", cooperate !=="", aguidance !=="", readiness !=="", conscio !=="", trustful !=="", caring !=="", selfinit !=="", decision !=="", appearwork !=="", reason !=="", whatare !=="", waslogbook !=="", knowledge !=="", willingness !=="", utilise !=="", creativity !=="", confidence !=="", hardworking !=="", achievement !=="", whicharea !=="", suggestion !==""){
+        const students = new Array();
+        if (fname && tnumber !== "" && degree !== "" && year !== "" && address !== "" && branch !== "" && region !== "" && district !== "" && from !== "" && todate !== "" && haswork !== "" && position !== "" && duties !== "" && panctual !== "" && regular !== "" && dressing !== "" && confidental !== "" && accountability !== "" && descpline !== "" && cooperate !== "" && aguidance !== "" && readiness !== "" && conscio !== "" && trustful !== "" && caring !== "" && selfinit !== "" && decision !== "" && appearwork !== "" && reason !== "" && whatare !== "" && waslogbook !== "" && knowledge !== "" && willingness !== "" && utilise !== "" && creativity !== "" && confidence !== "" && hardworking !== "" && achievement !== "" && whicharea !== "" && suggestion !== "" && selectedSupervisor !== null) {
             const construct = {
                 fullname: fname,
                 tnumber: tnumber,
@@ -162,23 +149,27 @@ const USAssesments = () => {
                 achievement: achievement,
                 whicharea: whicharea,
                 suggestion: suggestion,
-                super_id: localStorage.suid
+                super_id: localStorage.suid,
+                supervisorId: selectedSupervisor.super
             }
-    
+
             students.push(construct);
-            console.log(students);
 
             const request = axios.request({
-                url:`${baseURL}upload_student_assesments.php`,
-                method:'POST',
+                url: `${baseURL}upload_student_assesments.php`,
+                method: 'POST',
                 data: JSON.stringify(students)
             });
 
-            console.log((await request).data);
-        }else{
+            if ((await request).data.status === 200) {
+                toast.success((await request).data.message);
+            } else {
+                toast.error((await request).data.message);
+            }
+        } else {
             toast.error("all fields required");
         }
-        
+
     }
     return (
         <div className='main_upload'>
@@ -191,8 +182,34 @@ const USAssesments = () => {
                             }}> ASSESMENT FORM FOR FIELD SUPERVISOR/TRAINING OFFICER ( AFSO )</h1>
                             <div className="pt-5">
 
+                                <span>Student Supervisor</span>
+                            </div>
+                            <div className="grid_50_50">
+                                <div className="" style={{
+                                    "--template": "auto"
+                                }}>
+
+<div className="input m-1">
+                            <div className="span">
+                                {/* <h4 className="text-muted page-title">Supervisor <span>*</span></h4> */}
+                            </div>
+                            <AutoComplete className='auto_cp' field="name" value={selectedSupervisor} suggestions={filteredSupervisors} completeMethod={search3} onChange={superchange} style={{
+                                border: "none !important"
+
+                            }} dropdown />
+                        </div>
+                                </div>
+                                <div className="" style={{
+                                    "--template": "auto"
+                                }}>
+
+                                </div>
+                            </div>
+                            <div className="pt-2">
+
                                 <span>Student Information</span>
                             </div>
+
                             <div className="grid_50_50">
                                 <div className="" style={{
                                     "--template": "auto 50%"
@@ -377,7 +394,7 @@ const USAssesments = () => {
                         <div className="">
 
                             <div className="flex_box flex">
-                                {/* <button onClick={handleAnother}>Add Another</button> */}
+                                <button onClick={handleAnother}>Log Out</button>
                                 <button onClick={handleSubmitStudent}>Complete</button>
                             </div>
                         </div>

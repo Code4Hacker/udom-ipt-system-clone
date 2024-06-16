@@ -17,6 +17,8 @@ import AuthToken from "./token_auth/AuthToken";
 import AfterVerify from "./token_auth/AfterSuccess";
 import USAssesments from "./forms/UploadStudentAssesments";
 import SSignIn from "./token_auth/SignIn";
+import StudentAsses from "./admin/StudentAsses";
+import Assesments from "./supervisor/Assesments";
 export{
     SuperDashboard,
     UserDashboard,
@@ -36,5 +38,7 @@ export{
     AuthToken, 
     AfterVerify,
     USAssesments,
-    SSignIn
+    SSignIn,
+    StudentAsses,
+    Assesments
 }

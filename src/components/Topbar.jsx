@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { Col, Container, Row } from 'react-bootstrap'
+import { Row } from 'react-bootstrap'
 import {  ArrowDown, Fullscreen, Toggle2On } from 'react-bootstrap-icons'
 import { udom_logo } from '../assets'
 import { Link, useNavigate } from 'react-router-dom'

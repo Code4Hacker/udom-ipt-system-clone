@@ -1,7 +1,7 @@
 import React from 'react'
 import { udom_logo } from '../assets'
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { FileEarmarkPdf, GeoAltFill, GridFill, JournalBookmarkFill, ListTask, MapFill, PeopleFill, Speedometer, Tv, TvFill } from 'react-bootstrap-icons'
+import { BookHalf, FileEarmarkPdf, GeoAltFill, GridFill, JournalBookmarkFill, ListTask, MapFill, PeopleFill, Speedometer, Tv, TvFill } from 'react-bootstrap-icons'
 const Sidebar = () => {
     const storage = window.localStorage;
     const links =
@@ -45,7 +45,11 @@ const Sidebar = () => {
                     "url": "/places",
                     "icon": <GeoAltFill />,
                     "title": "Assigned Places"
-                },] :
+                },{
+                    "url":"/assesments",
+                    "icon": <BookHalf/>,
+                    "title":"Student Assesments"
+                }] :
                 [{
                     "url": "/admin_dashboard",
                     "icon": <JournalBookmarkFill />,
@@ -58,7 +62,11 @@ const Sidebar = () => {
                     "url": "/admin_students",
                     "icon": <PeopleFill />,
                     "title": "Students"
-                },
+                },{
+                    "url":"/student_assesments",
+                    "icon": <BookHalf/>,
+                    "title":"Student Assesments"
+                }
                 ]
 
     // const params = useParams();
